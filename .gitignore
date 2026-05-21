@@ -1,0 +1,32 @@
+.DS_Store
+
+# Local environments
+.venv/
+
+# LaTeX build products
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.upa
+*.upb
+*.vrb
+
+# minted caches
+_minted-*/
+_*.config.minted
+*.highlight.minted
+*.style.minted
+
+# Generated outputs for this deck
+/slides.pdf
+/slides-luamml-mathml.html

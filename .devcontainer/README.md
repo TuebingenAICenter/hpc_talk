@@ -1,61 +1,76 @@
 # Devcontainer for `hpc_talk`
 
-Builds the deck inside the official-ish `texlive/texlive:latest` image (see
-the repo README for what that is). The theme's system fonts and the Catppuccin
-Pygments styles, which the README installs by hand, come from
-`.devcontainer/setup-hpc-talk.sh` (also used by the `postCreateCommand` in
-`devcontainer.json`).
+Builds the deck inside a container based on `texlive/texlive:latest`, with the
+tooling, fonts, and LaTeX packages the deck needs baked into the image at build
+time. Edits and build outputs (`slides.pdf`) live on the host via the standard
+devcontainer workspace bind mount.
 
 ## Usage
 
-**VS Code**: "Reopen in Container" (⌘⇧P → *Dev Containers: Reopen in Container*).
+**VS Code**: open the repo, then Command Palette →
+*Dev Containers: Reopen in Container* (or *Rebuild Container*).
 
 **`devcontainer` CLI** (or any Dev Containers CLI):
 
 ```sh
-devcontainer build --workspace-folder . \
-    --image-name hpc-talk:dev
-devcontainer up --workspace-folder . \
-    --remove-existing-container \
-    --mount-workspace-git-root false
+devcontainer build --workspace-folder .
+devcontainer up --workspace-folder .
 ```
 
-`devcontainer.json` picks the default user-scope mount, so the container
-works on the repo itself.
-
-**First build** clones `slidemint`, `macromint`, and `figmint` from GitHub and
-runs `l3build install` on each — the only slow step (~1–2 min).
+The container runs as `root` (`remoteUser`), and the workspace is bind-mounted
+at `/workspaces/hpc_talk`. Extensions are installed into the container on first
+open, per `customizations.vscode.extensions` in `devcontainer.json`.
 
 ## Build the deck
 
 ```sh
-rebuild        # = latexmk slides.tex, from the repo root
+latexmk slides.tex      # or Rebuild from the LaTeX Workshop UI
 ```
 
-The `latexmkrc` handles LuaLaTeX mode and puts the venv-style tools on `PATH`.
+`latexmkrc` sets LuaLaTeX mode. Output lands at `slides.pdf` in the repo root
+(and is written back to the host through the bind mount).
 
 ## What's inside
 
-- TeX Live 2026 `full` scheme: `latexmk`, `lua(la)tex`, `beamer`, `minted`,
-  `tlmgr`, `l3build`
-- `python3` with `pip`, `Pygments`, and `catppuccin[pygments]`
-- System fonts used by `slidemint`: Plus Jakarta Sans, Roboto Condensed,
-  MesloLGS NF, Noto Sans Math
-- The author's `slidemint`, `macromint`, `figmint` packages (installed to the
-  TeX user tree via `l3build install`)
+- TeX Live `full` scheme: `latexmk`, `lua(la)tex`, `beamer`, `minted`, `tlmgr`,
+  `l3build`
+- `python3` with `Pygments` and `catppuccin[pygments]` (global, for `minted`)
+- System fonts used by `slidemint` (fetched from Google Fonts / GitHub at build
+  time, hosted in `/usr/local/share/fonts/hpc-talk`):
+  - Plus Jakarta Sans (+ Italic)
+  - Roboto Condensed
+  - MesloLGS NF (Regular, Bold, Bold Italic, Italic)
+  - Noto Sans Math (Regular)
+- The author's `slidemint`, `macromint`, and `figmint` packages, installed to
+  the TeX user tree (`/root/texmf`) via `l3build install`
+- Small Debian tools: `git`, `wget`, `unzip`, `coreutils`
 
 ## Notes / caveats
 
-- The image is Debian *sid*, so `apt` pulls unstable packages. Setup overlays
-  `sid` into `/etc/apt/sources.list.d/` because the shipped image already
-  needs `sid non-free` apt lines and the base image's sources didn't have them.
-- TeX Live fonts live in a *per-release* tree: `tlmgr install` writes to the
-  TeX Live 2026 tree, which means **every** TeX Live *major* release requires
-  re-copying the three `l3build install`s and any `tlmgr`-installed fonts into
-  the new tree. Keeping setup as a `postCreateCommand` makes that one-line to
-  rerun ("Rebuild Container").
-- `latest` is rebuilt weekly; pin a `TL20XX-…` tag or image digest in
-  `devcontainer.json` for reproducible builds.
+- **The base image is Debian `testing`** (currently `forky`). The `apt` setup
+  uses the image's stock sources; nothing is overlaid.
+- **Fonts that are not Debian packages** (Plus Jakarta Sans, Roboto Condensed,
+  MesloLGS NF, Noto Sans Math) are downloaded from their upstream Google
+  Fonts / GitHub locations at build time. The URLs are pinned to
+  `google/fonts` `main` and `romkatv/powerlevel10k-media` `master`; pin a
+  specific commit for fully reproducible builds.
+- **SELinux (Fedora):** the devcontainer runs with
+  `--security-opt label=disable` (in `devcontainer.json`) so the bind-mounted
+  workspace is writable inside the container despite the host's SELinux labels.
+  This is a deliberate, container-scoped relaxation; the container itself has
+  no other escalated privileges.
+- **`containerEnv.PATH`** is set explicitly (standard bin dirs +
+  `/usr/local/work/bin`) rather than using `${containerEnv:PATH}`, which the
+  Dev Containers CLI can resolve to the *host* PATH and break the container's
+  shell (e.g. `sleep: not found`).
+- **TeX Live is per-release:** `tl` majors move font/package trees; rebuilding
+  the image picks up new TeX Live releases. `latest` is rebuilt upstream
+  weekly — pin a `TL20XX-…` tag or image digest for reproducible builds.
+- **Extensions** install into the container on first open; adding one to
+  `customizations.vscode.extensions` takes effect on the next open/rebuild
+  without rebuilding the image.
+- The upstream `texlive` image is Debian `sid`/`testing`, so `apt` may pull
+  unstable packages — expected for a bleeding-edge TeX environment.
 
 ## License
 

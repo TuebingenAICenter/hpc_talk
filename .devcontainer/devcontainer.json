@@ -1,0 +1,21 @@
+{
+  "name": "hpc-talk",
+  "build": {
+    "dockerfile": "Containerfile"
+  },
+  "containerEnv": {
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/work/bin"
+  },
+  "remoteUser": "root",
+  "runArgs": ["--security-opt", "label=disable"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "james-yu.latex-workshop",
+        "ms-python.python",
+        "streetsidesoftware.code-spell-checker",
+        "valentjn.vscode-ltex"
+      ]
+    }
+  }
+}

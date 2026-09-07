@@ -1,0 +1,69 @@
+# syntax=docker/dockerfile:1
+# Devcontainer image for the hpc_talk deck.
+# Base: Debian testing (texlive/texlive:latest). Fonts the deck needs that are
+# not in Debian are fetched from GitHub/Google Fonts at build time.
+
+FROM texlive/texlive:latest
+ARG DEBIAN_FRONTEND=noninteractive
+
+# The base image's stock Debian sources (testing) are fine — nothing to copy.
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        git \
+        python3 \
+        python3-pip \
+        python3-pygments \
+        fonts-noto-core \
+        wget \
+        unzip \
+        coreutils \
+    ; \
+    rm -rf /var/lib/apt/lists/* /root/.cache
+
+# 2) Python side of minted: a global catppuccin[pygments] install.
+#    (The deck needs the styles present wherever minted looks; a deck-local
+#     .venv also works but is fragile across image rebuilds.)
+RUN python3 -m pip install --break-system-packages --no-cache-dir "catppuccin[pygments]"
+
+# 3) Fonts the theme wants that are not Debian packages. Fetched from their
+#    upstream sources into the TeX Live font tree (texmf-local).
+RUN set -eux; \
+    mkdir -p /usr/local/share/fonts/hpc-talk; \
+    cd /usr/local/share/fonts/hpc-talk; \
+    wget -q -O 'PlusJakartaSans[wght].ttf' \
+        'https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/PlusJakartaSans%5Bwght%5D.ttf'; \
+    wget -q -O 'PlusJakartaSans-Italic[wght].ttf' \
+        'https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/PlusJakartaSans-Italic%5Bwght%5D.ttf'; \
+    wget -q -O 'RobotoCondensed[wght].ttf' \
+        'https://raw.githubusercontent.com/google/fonts/main/ofl/robotocondensed/RobotoCondensed%5Bwght%5D.ttf'; \
+    wget -q -O 'MesloLGS-NF-Regular.ttf' \
+        'https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Regular.ttf'; \
+    wget -q -O 'MesloLGS-NF-Bold.ttf' \
+        'https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold.ttf'; \
+    wget -q -O 'MesloLGS-NF-BoldItalic.ttf' \
+        'https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold%20Italic.ttf'; \
+    wget -q -O 'MesloLGS-NF-Italic.ttf' \
+        'https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Italic.ttf'; \
+    wget -q -O 'NotoSansMath-Regular.ttf' \
+        'https://raw.githubusercontent.com/google/fonts/main/ofl/notosansmath/NotoSansMath-Regular.ttf'; \
+    fc-cache -f >/dev/null
+
+# 4) TeX side: install the three bmucsanyi packages at build time, so they
+#    are baked into the image instead of re-cloned/run per container.
+RUN set -eux; \
+    git clone --depth 1 https://github.com/bmucsanyi/slidemint.git /opt/slidemint; \
+    cd /opt/slidemint && l3build install; \
+    cd /opt && rm -rf /opt/slidemint; \
+    git clone --depth 1 https://github.com/bmucsanyi/macromint.git /opt/macromint; \
+    cd /opt/macromint && l3build install; \
+    cd /opt && rm -rf /opt/macromint; \
+    git clone --depth 1 https://github.com/bmucsanyi/figmint.git /opt/figmint; \
+    cd /opt/figmint && l3build install; \
+    rm -rf /opt/figmint
+
+# The base image already sets PATH for TeX's own binaries; the deck-local
+# .venv/bin (when used) is added by latexmkrc.
+
+WORKDIR /workspaces/hpc_talk
+CMD ["/bin/bash"]

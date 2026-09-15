@@ -4,7 +4,7 @@
 
 \usetheme[palette = frappe]{slidemint}
 \slidemintsetup{
-    footer-left = {\textcopyright~B\'alint Mucs\'anyi, 2026. LinkedIn, Bluesky, GitHub: @bmucsanyi}
+    footer-left = {\textcopyright~Michael Tiemann, 2026}
 }
 
 \usepackage{macromint}
@@ -14,8 +14,8 @@
 
 \title{HPC in Europe}
 \subtitle{Through an Academic's Lens}
-\author{B\'alint Mucs\'anyi}
-\institute{University of T\"ubingen, T\"ubingen AI Center}
+\author{Dr.~Michael Tiemann}
+\institute{Project Minerva\\T\"ubingen AI Center\\University of T\"ubingen}
 \date{May 20, 2026}
 
 \newcommand*{\EUR}[1]{\mbox{€\,#1}}
@@ -31,8 +31,17 @@
             \node[anchor=north east,yshift=-3mm,xshift=-5mm] at (current page.north east) {
                 \includegraphics[width=2.5cm]{graphics/affiliation-logo-light.pdf}
             };
-            \node[anchor=south east,yshift=3mm,xshift=-3mm] at (current page.south east) {
-                \includegraphics[width=8cm]{graphics/collaboration-logo-light.pdf}
+            % Collaboration logo (Uni + MPI) removed — uncomment to re-add or replace.
+            % \node[anchor=south east,yshift=3mm,xshift=-3mm] at (current page.south east) {
+            %     \includegraphics[width=8cm]{graphics/collaboration-logo-light.pdf}
+            % };
+            \node[anchor=south,yshift=3mm] at (current page.south) {
+                \scriptsize\textcolor{SlidemintMuted}{Original talk: B\'alint Mucs\'anyi \,\textbar\, \href{https://github.com/bmucsanyi/hpc_talk}{github.com/bmucsanyi/hpc\_talk}}
+            };
+            \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
+                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
+                \hspace{.6em}
+                \includegraphics[height=1cm]{graphics/minerva-logo.png}
             };
         \else
             \node[anchor=west,xshift=-3mm] at (current page.west) {
@@ -41,8 +50,17 @@
             \node[anchor=north east,yshift=-3mm,xshift=-5mm] at (current page.north east) {
                 \includegraphics[width=2.5cm]{graphics/affiliation-logo-color.pdf}
             };
-            \node[anchor=south east,yshift=3mm,xshift=-3mm] at (current page.south east) {
-                \includegraphics[width=8cm]{graphics/collaboration-logo-color.pdf}
+            % Collaboration logo (Uni + MPI) removed — uncomment to re-add or replace.
+            % \node[anchor=south east,yshift=3mm,xshift=-3mm] at (current page.south east) {
+            %     \includegraphics[width=8cm]{graphics/collaboration-logo-color.pdf}
+            % };
+            \node[anchor=south,yshift=3mm] at (current page.south) {
+                \scriptsize\textcolor{SlidemintMuted}{Original talk: B\'alint Mucs\'anyi \,\textbar\, \href{https://github.com/bmucsanyi/hpc_talk}{github.com/bmucsanyi/hpc\_talk}}
+            };
+            \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
+                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
+                \hspace{.6em}
+                \includegraphics[height=1cm]{graphics/minerva-logo.png}
             };
         \fi
         \node[anchor=center,xshift=.1\paperwidth] at (current page.center) {
@@ -64,58 +82,72 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Where this talk comes from}
-    \framesubtitle{Two months ago}
+    \frametitle{The GPU need of an ML/CV PhD}
+    \framesubtitle{Not a niche problem}
     \begin{itemize}
-        \item I needed \SlidemintTextbf{2--5 H100 GPU-years} for two projects.
-        \item Galvani and Ferranti throttled the concurrent-job count.
-        \item So I went looking around. A lot.
+        \item Modern research runs on \SlidemintTextbf{training runs}: large models, large datasets, several seeds.
+        \item A competitive study needs \SlidemintTextbf{hundreds of GPU-days}; ablations, hyperparameter search, and baselines \SlidemintEmph{multiply} that again.
+        \item A local desktop with 1--2 GPUs is fine for \SlidemintEmph{prototyping}, not for the campaign---if you're lucky and you have one and it satisfies your needs.
+        \item Buying the hardware yourself is not an option---so researchers climb a ladder of \SlidemintTextbf{shared resources}.
     \end{itemize}
 
-    \vspace{0.8em}
-    Today: a map of what I found, what worked, and what I recommend.
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{One GPU already costs a small fortune: the price tag is the next section.}
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{Compute is not to be taken for granted}
-    \framesubtitle{A six-week ML Cloud weather report}
-    {
-    \footnotesize
-    \begin{tabular}{@{}r l@{}}
-        \textcolor{SlidemintMuted}{07 Apr} & Galvani: DNS issues \\
-        \textcolor{SlidemintMuted}{08 Apr} & Galvani: scheduled maintenance starts \\
-        \textcolor{SlidemintMuted}{09 Apr} & Galvani back; \SlidemintTextbf{queue not preserved} \\
-        \textcolor{SlidemintMuted}{09 Apr} & Ferranti: downtime needed \\
-        \textcolor{SlidemintMuted}{15 Apr} & Maintenance extended \\
-        \textcolor{SlidemintMuted}{16 Apr} & New Weka vs new OS: workaround found \\
-        \textcolor{SlidemintMuted}{17 Apr} & Ferranti back, but only via \mintinline{text}|ferranti-login2| \\
-        \textcolor{SlidemintMuted}{30 Apr} & Ferranti login restricted \\
-        \textcolor{SlidemintMuted}{30 Apr} & Back online; \SlidemintTextbf{SLURM queue not preserved} \\
-        \textcolor{SlidemintMuted}{06 May} & Galvani login-node reboots \\
-        \textcolor{SlidemintMuted}{12 May} & Galvani: electrical works on cooling \\
-        \textcolor{SlidemintMuted}{13 May} & Emergency Lustre maintenance \\
-    \end{tabular}
-    \par
-    }
-    \vspace{0.8em}
-    \SlidemintEmph{I need options\dots~Multiple clusters can't be down at the same time, right?}
+% ----------------------------------------------------------------------
+% Original first slide of B\'alint Mucs\'anyi's talk, restored verbatim.
+% Kept here as an ADDITIONAL slide: the deck no longer opens with it, but
+% removing it was not intended. Comment out the frame to drop it again.
+% ----------------------------------------------------------------------
+\begin{frame}
+    \frametitle{An example project}
+    \framesubtitle{A project from T\"ubingen's B\'alint Mucs\'anyi}
+    \begin{itemize}
+        \item Needed \SlidemintTextbf{2--5 H100 GPU-years} for two projects.
+        \item T\"ubingen's local AI cluster, two machines named Galvani and Ferranti, throttled the concurrent-job count.
+        \item And thus he set out on a quest for compute.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{What this talk is}
-    \framesubtitle{And what it is not}
-    \SlidemintTextbf{Not} HPC 101: most of you have already used a cluster.
+    \frametitle{From one desktop GPU to EuroHPC}
+    \framesubtitle{The compute ladder}
+    \begin{center}
+    \begin{tabular}{@{}>{\bfseries\color{SlidemintStrong}}r@{\;}c@{\quad}l@{}}
+        Desktop        &       & 1--2 GPUs, always yours; prototyping and debugging \\
+                       & $\downarrow$ & \\
+        University     &       & group cluster / group quota; e.g.\ the ML Cloud \\
+                       & $\downarrow$ & \\
+        State          &       & Helix (Baden-W\"urttemberg) \\
+                       & $\downarrow$ & \\
+        Federal        &       & NHR (national Tier-2), GCS (national Tier-1) \\
+                       & $\downarrow$ & \\
+        \SlidemintTextbf{EuroHPC JU} & & the European fleet: MareNostrum 5, LUMI, Leonardo, JUPITER \\
+    \end{tabular}
+    \end{center}
 
-    \vspace{0.5em}
-    What we'll be centered around: \SlidemintEmph{throughput is not \texttt{sinfo}}.
-    $$\text{throughput} \approx \text{GPUs} \times \text{reliability} \times \text{queue} \times \text{proposal latency} \times \text{communication} \times \text{best practices}$$
-
-    \vspace{0.5em}
-    We climb three ladders: \SlidemintTextbf{T\"ubingen}, \SlidemintTextbf{Germany}, \SlidemintTextbf{Europe}.
-
-    \vspace{0.5 em}
-    Then: how to make the most out of the resources.
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Each rung up buys scale --- and costs latency. Proposal time is part of throughput.}
 \end{frame}
+
+
+
+% \begin{frame}
+%     \frametitle{What this talk is}
+%     \framesubtitle{And what it is not}
+%     \SlidemintTextbf{Not} HPC 101: most of you have already used a cluster.
+
+%     \vspace{0.5em}
+%     What we'll be centered around: \SlidemintEmph{throughput is not \texttt{sinfo}}.
+%     $$\text{throughput} \approx \text{GPUs} \times \text{reliability} \times \text{queue} \times \text{proposal latency} \times \text{communication} \times \text{best practices}$$
+
+%     \vspace{0.5em}
+%     We climb the \SlidemintTextbf{GPU ladder}: \SlidemintTextbf{desktop} $\to$ \SlidemintTextbf{university} $\to$ \SlidemintTextbf{state} $\to$ \SlidemintTextbf{federal} $\to$ \SlidemintTextbf{Europe}.
+
+%     \vspace{0.5 em}
+%     Then: how to make the most out of the resources.
+% \end{frame}
 
 \section{The cost of compute}
 
@@ -155,7 +187,7 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{My project, priced four ways}
+    \frametitle{B\'alint's project, priced four ways}
     \framesubtitle{2--5 H100 GPU-years, 64 H100s peak}
     \begin{center}
     \begin{tabular}{@{}l r@{}}
@@ -328,6 +360,31 @@
     \textcolor{SlidemintMuted}{Bulk requests make scheduling less efficient. 8 nodes for 3 days takes about a day of queue.}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Compute is not to be taken for granted}
+    \framesubtitle{A six-week ML Cloud weather report}
+    {
+    \footnotesize
+    \begin{tabular}{@{}r l@{}}
+        \textcolor{SlidemintMuted}{07 Apr} & Galvani: DNS issues \\
+        \textcolor{SlidemintMuted}{08 Apr} & Galvani: scheduled maintenance starts \\
+        \textcolor{SlidemintMuted}{09 Apr} & Galvani back; \SlidemintTextbf{queue not preserved} \\
+        \textcolor{SlidemintMuted}{09 Apr} & Ferranti: downtime needed \\
+        \textcolor{SlidemintMuted}{15 Apr} & Maintenance extended \\
+        \textcolor{SlidemintMuted}{16 Apr} & New Weka vs new OS: workaround found \\
+        \textcolor{SlidemintMuted}{17 Apr} & Ferranti back, but only via \mintinline{text}|ferranti-login2| \\
+        \textcolor{SlidemintMuted}{30 Apr} & Ferranti login restricted \\
+        \textcolor{SlidemintMuted}{30 Apr} & Back online; \SlidemintTextbf{SLURM queue not preserved} \\
+        \textcolor{SlidemintMuted}{06 May} & Galvani login-node reboots \\
+        \textcolor{SlidemintMuted}{12 May} & Galvani: electrical works on cooling \\
+        \textcolor{SlidemintMuted}{13 May} & Emergency Lustre maintenance \\
+    \end{tabular}
+    \par
+    }
+    \vspace{0.8em}
+    \SlidemintEmph{I need options\dots~Multiple clusters can't be down at the same time, right?}
+\end{frame}
+
 \begin{frame}
     \frametitle{Idealized vs realistic throughput}
     \framesubtitle{If the caps were the only constraint}
@@ -450,6 +507,71 @@
 
     \vspace{0.5em}
     \SlidemintTextbf{JUPITER is dual:} EuroHPC- \SlidemintEmph{and} GCS-relevant.
+\end{frame}
+
+\begin{frame}
+    \frametitle{State-level HPC in Germany}
+    \framesubtitle{Baden-W\"urttemberg as the running example}
+    Each state funds its own layer; in Baden-W\"urttemberg that is \SlidemintTextbf{bwHPC}:
+    \begin{itemize}
+        \item \SlidemintTextbf{bwUniCluster 3.0} (KIT): Tier-3 basic supply for all BW universities; \SlidemintEmph{free} for members, acknowledge in publications.
+        \item \SlidemintTextbf{4 bwForClusters}: research-domain clusters (Tier-3) for specific architectures and software.
+        \item \SlidemintTextbf{HoreKa} (NHR@KIT): Tier-2, $\sim$60{,}000 cores, $\sim$750 A100/H100 GPUs, $\sim$17 PFLOPS.
+    \end{itemize}
+
+    \vspace{0.8em}
+    Other states have their own \SlidemintEmph{state} layer, distinct from the national one: \SlidemintTextbf{GWDG Emmy/Grete} (G\"ottingen, for the North/HLRN); for Bavaria that is the \SlidemintTextbf{LRZ Linux Cluster} (first-come-first-serve for Bavarian users).
+
+    Note: \SlidemintTextbf{LRZ} (Garching) is \SlidemintEmph{not} a pure state centre --- its supercomputer \textbf{SuperMUC-NG} is a \SlidemintTextbf{GCS (national Tier-1)} resource (next slide).
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{State HPC is the natural next step after the university cluster --- \SlidemintEmph{no proposal latency} to speak of.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{LRZ: the Garching supercomputer centre}
+    \framesubtitle{Bavarian Academy; home of SuperMUC-NG}
+    \SlidemintTextbf{What it is:} the Leibniz-Rechenzentrum on the Munich research campus ---- Bavaria's computing centre \SlidemintEmph{and} one of the three German GCS (Tier-1) centres.
+
+    \vspace{0.6em}
+    \SlidemintTextbf{GPU resources:}
+    \begin{itemize}
+        \item \textbf{SuperMUC-NG Phase 2}: $\sim$936 GPUs, but \SlidemintEmph{Intel Ponte Vecchio}, not NVIDIA --- not a CUDA machine.
+        \item \textbf{AI Systems}: NVIDIA \SlidemintTextbf{A100 / H100} partitions (access \SlidemintEmph{on request}).
+        \item \textbf{CoolMUC-4} / Linux Cluster: CPU-only, first-come-first-serve for \SlidemintEmph{Bavarian} users.
+    \end{itemize}
+
+    \vspace{0.6em}
+    \SlidemintTextbf{Who can apply for GPU time:}
+    \begin{itemize}
+        \item \textbf{GCS route} (national, via GCS-JARDS): national GPU machine, need to show code works on Ponte Vecchio (or get prep-access, 7{,}000 GPU-h + porting help).
+        \item \textbf{AI Systems}: on request.
+        \item \textbf{If your code can't port}: LRZ explicitly points you to \SlidemintTextbf{NHR} (universities).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{NHR application structure}
+    \framesubtitle{German Tier-2, one portal: NHR-JARDS}
+    \begin{center}
+    \begin{tabular}{@{}l l l@{}}
+        \toprule
+        \SlidemintTextbf{Project type} & \SlidemintTextbf{Size} & \SlidemintTextbf{Review / cadence} \\
+        \midrule
+        Starter           & $\leq$300k core-h, 1 yr & formal, \SlidemintEmph{rolling} \\
+        Test / Preparation& $\leq$300k core-h        & formal, \SlidemintEmph{rolling} \\
+        Compute (Normal)  & 300k--5M core-h \newline $<12.5$k GPU-h & Technical+Scientific Board, \SlidemintEmph{quarterly} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+
+    \vspace{0.8em}
+    \begin{itemize}
+        \item PI must be a \SlidemintTextbf{scientist with a doctoral degree} at a German university; postdocs can use approved projects.
+        \item Free of charge; \SlidemintEmph{acknowledge} NHR in publications + annual status reports.
+        \item The 9 NHR centres pool resources for users nationwide (KIT, ZIB, TUD, FAU, NHR@SW, NHR-NORD, PC2, LRZ/TUM, 4CES).
+        \item AI Fast Track exists as a lighter entry.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -681,6 +803,184 @@
     \end{minted}
 \end{frame}
 
+\section{How to apply for EuroHPC compute}
+
+\begin{frame}
+    \frametitle{The application portal}
+    \framesubtitle{One entry point for all EuroHPC access}
+    Every application for EuroHPC compute goes through a single portal: \SlidemintTextbf{access.eurohpc-ju.europa.eu}.
+
+    \vspace{0.8em}
+    \begin{itemize}
+        \item Pick the \SlidemintTextbf{access mode} that matches your project (see \emph{Access modes that matter}).
+        \item Prepare the application online and submit it before the call's cutoff.
+        \item Access is currently \SlidemintTextbf{free of charge}.
+        \item The JU allocates \SlidemintTextbf{35--50\,\%} of each system's capacity (petascale to pre-exascale/exascale).
+    \end{itemize}
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{You apply to the JU, not to the hosting site.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Who can apply}
+    \framesubtitle{Eligibility for EuroHPC access}
+    \begin{itemize}
+        \item \SlidemintTextbf{Researchers} from academia, research institutes, public authorities, and industry.
+        \item Based in an EU Member State, a EuroHPC \SlidemintTextbf{participating state}, or a \SlidemintTextbf{Digital Europe / Horizon Europe}-associated country.
+        \item UK institutions remain eligible for the \SlidemintTextbf{H2020-era systems} under the EU--UK Withdrawal Agreement.
+        \item For \SlidemintEmph{Open Science} research (results public): any European organisation may apply, including companies and SMEs.
+    \end{itemize}
+
+    \begin{center}
+        \includegraphics[width=0.72\textwidth]{graphics/eurohpc-participating-states.png}
+        {\scriptsize\textcolor{SlidemintMuted}{EuroHPC JU participating states: 27 EU Member States + 11 associated countries $\Rightarrow$ 38.}}
+    \end{center}
+
+    \textcolor{SlidemintMuted}{There is no privileged access: EU projects line up through the same calls as everyone else.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{The application workflow}
+    \framesubtitle{From call to first job}
+    \begin{enumerate}
+        \item \SlidemintTextbf{Choose the access mode.} Six modes with very different latencies (see \emph{Access modes that matter} and \emph{Access mode latency}).
+        \item \SlidemintTextbf{Prepare the application.} The two hard fields for ML are scalability evidence and resource justification (see \emph{The application form} and \emph{What an academic can actually get}).
+        \item \SlidemintTextbf{Submit through the portal} before the cutoff --- Benchmark and Development are continuously open.
+        \item \SlidemintTextbf{Peer review:} independent panels rank the proposals; the JU took this over from PRACE at the end of 2022.
+        \item \SlidemintTextbf{Start computing} with the awarded allocation and host-site accounts.
+    \end{enumerate}
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Throughput $\approx$ GPUs $\times$ reliability $\times$ queue $\times$ proposal latency $\times$ communication.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Free of charge means having obligations}
+    \framesubtitle{What successful applicants commit to}
+    \begin{itemize}
+        \item \SlidemintTextbf{Acknowledge} EuroHPC resources in all related publications.
+        \item Contribute to \SlidemintTextbf{dissemination} events.
+        \item Submit a \SlidemintTextbf{final report} after the allocation ends.
+    \end{itemize}
+
+    \vspace{1em}
+    The exact conditions are set per call --- read the call's documents before applying.
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Free of charge $\neq$ free of effort.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Where to get help along the way}
+    \framesubtitle{Two support tiers}
+    \SlidemintTextbf{EPICURE} (EuroHPC Application Support) provides \SlidemintEmph{Level 2/3} services:
+    \begin{itemize}
+        \item code enabling and \SlidemintTextbf{scaling} across EuroHPC systems
+        \item \SlidemintTextbf{performance analysis} and benchmarking
+        \item \SlidemintTextbf{code refactoring} and optimization
+    \end{itemize}
+
+    \vspace{0.8em}
+    \SlidemintTextbf{Level 1} (accounts, logins, queues, basic job scripts) stays with the \SlidemintTextbf{host site's application support} team.
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Porting to a new architecture is real work --- budget time for it.}
+\end{frame}
+
+\section{MINERVA: the European AI support hub}
+
+\begin{frame}
+    \frametitle{MINERVA}
+    \framesubtitle{The European Support Centre for Scalable AI Research and Deployment}
+    A EuroHPC JU-funded project (2025--2027) that helps European AI research
+    teams make real use of HPC: \SlidemintTextbf{free support} for porting,
+    scaling, and training large models on EuroHPC systems.
+
+    \vspace{0.8em}
+    \begin{itemize}
+        \item \SlidemintTextbf{Access to state-of-the-art HPC} infrastructure via EuroHPC JU calls.
+        \item \SlidemintTextbf{Scaling and optimization} of AI workflows by HPC-AI specialists.
+        \item \SlidemintTextbf{Training}, best practices, and a European community hub.
+        \item Strengthens \SlidemintTextbf{open foundation models} and European digital sovereignty.
+    \end{itemize}
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{minerva4ai.eu}
+\end{frame}
+
+\begin{frame}
+    \frametitle{MINERVA support tiers}
+    \framesubtitle{Free help from ``port it'' to ``reach its full performance''}
+    \begin{itemize}
+        \item \SlidemintTextbf{L1} -- porting AI applications and workflows to HPC
+        \item \SlidemintTextbf{L2} -- using and mastering AI libraries (PyTorch, TensorFlow) on HPC architectures
+        \item \SlidemintTextbf{L3} -- pre-training open large-scale and foundation models
+        \item \SlidemintTextbf{L4} -- specializing open large-scale and foundation models
+        \item \SlidemintTextbf{L5} -- guidance on ethical and responsible AI
+    \end{itemize}
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Funded by the European Union / EuroHPC JU; coordinated by CINECA with BSC, J\"ulich, CEA/CNRS/CINES, and more.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{MINERVA's grant tools}
+    \framesubtitle{Two free assistants, from application to request}
+    \begin{description}
+        \item[\SlidemintTextbf{HPC Grant Studio} (\texttt{hpcgrants.minerva4ai.eu})]
+        your \SlidemintTextbf{hub for free GPU compute} in Europe: pick the right
+        EuroHPC call (AI Factory, Benchmark, Development Access, \dots), step
+        through the application, and check your fit -- directly on the MINERVA
+        portal.
+        \item[\SlidemintTextbf{Compute Needs Estimator} (\texttt{estimator.minerva4ai.eu})]
+        turn a research plan into a \SlidemintTextbf{credible GPU-hour request}:
+        workload, model family, data, precision, GPUs $\to$ an estimate with
+        \SlidemintTextbf{transparent methodology} and a justification you can reuse.
+    \end{description}
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Both are free, developed within MINERVA, and point you to the right access call.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Compute Needs Estimator}
+    \framesubtitle{From ``I want to train a model'' to a justified allocation}
+    \begin{itemize}
+        \item \SlidemintTextbf{Workload}: full-model training, partial fine-tuning, PEFT/LoRA, or inference/evaluation.
+        \item \SlidemintTextbf{Experimentation}: one-shot, regular iteration, heavy R\&D, or paper-ready ablations.
+        \item \SlidemintTextbf{Model size} and \SlidemintTextbf{data}: parameter count, dataset volume, epochs.
+        \item \SlidemintTextbf{Efficiency}: compute precision, target GPU count (up to 128).
+    \end{itemize}
+
+    \vspace{0.6em}
+    Output: \SlidemintTextbf{GPU-hours by architecture} (V100 / A100 / H100),
+    estimated wall-clock time, \SlidemintTextbf{VRAM / node} analysis, and a
+    \SlidemintTextbf{request recommendation} (GPU type, access call, copy-able
+    justification for the application).
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Estimator is advisory and methodology-based; used e.g.\ to size a Jean Zay request.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{MINERVA Best Practice Guides}
+    \framesubtitle{Optimizing AI models on European infrastructure}
+    A free, open guidebook that bridges \SlidemintTextbf{AI practice and HPC practice} --
+    the ``why'' behind systems behavior plus recipes for shared supercomputers.
+
+    \vspace{0.8em}
+    \begin{itemize}
+        \item \SlidemintTextbf{1. Infrastructure Foundations} -- compute, GPU architectures, networking, storage, scheduling.
+        \item \SlidemintTextbf{2. Efficient and Reliable LLM Pretraining} -- parallelism, scaling, sustainability, checkpointing, evaluation.
+        \item \SlidemintTextbf{3. Post-Training} -- instruction tuning, alignment (RL), efficient inference.
+        \item \SlidemintTextbf{4. Explainable AI} -- interpretability methods with Jupyter notebooks and use cases.
+    \end{itemize}
+
+    \vspace{0.8em}
+    \textcolor{SlidemintMuted}{best-practice-guides.minerva4ai.eu\ \,\textbar\, CC~BY~4.0 (text), Apache~2.0 (code).}
+\end{frame}
+
 \section{How to use HPC}
 
 \begin{frame}
@@ -866,7 +1166,7 @@ result_fields = [
     \begin{enumerate}
         \item \SlidemintTextbf{Throughput} $\approx$ GPUs $\times$ reliability $\times$ queue $\times$ proposal latency $\times$ communication.\\
               The cluster's \mintinline{bash}|sinfo| is the smallest factor of that product.
-        \item \SlidemintTextbf{Climb the ladder:} ML Cloud / MPI / Helix $\to$ NHR (and EuroHPC) $\to$ GCS $\to$ EuroHPC.
+        \item \SlidemintTextbf{Climb the ladder:} desktop $\to$ university $\to$ state $\to$ federal \SlidemintTextbf{(NHR, GCS)} $\to$ EuroHPC.
         \item \SlidemintTextbf{Workflow:} Small jobs, resumability, DAGs, one local source of truth, efficient code.
     \end{enumerate}
 
@@ -877,7 +1177,13 @@ result_fields = [
 \begin{frame}
     \frametitle{Questions?}
     \begin{center}
-        \textcolor{SlidemintMuted}{\small balint.mucsanyi@uni-tuebingen.de \;\textbar\; @bmucsanyi}
+        \textcolor{SlidemintMuted}{\small Michael Tiemann}
+
+        \vspace{2.5em}
+
+        \includegraphics[height=1.1cm]{graphics/minerva-logo.png}
+        \hspace{2em}
+        \includegraphics[height=1.1cm]{graphics/eu-cofunded.jpg}
     \end{center}
 \end{frame}
 

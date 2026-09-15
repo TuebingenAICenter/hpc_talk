@@ -935,22 +935,22 @@
 
 \section{How to apply for EuroHPC compute}
 
-\begin{frame}
-    \frametitle{The application portal}
-    \framesubtitle{One entry point for all EuroHPC access}
-    Every application for EuroHPC compute goes through a single portal: \SlidemintTextbf{access.eurohpc-ju.europa.eu}.
+% \begin{frame}
+%     \frametitle{The application portal}
+%     \framesubtitle{One entry point for all EuroHPC access}
+%     Every application for EuroHPC compute goes through a single portal: \SlidemintTextbf{access.eurohpc-ju.europa.eu}.
 
-    \vspace{0.8em}
-    \begin{itemize}
-        \item Pick the \SlidemintTextbf{access mode} that matches your project and audience (see \emph{Access modes that matter}).
-        \item Prepare the application online and submit it before the call's cutoff.
-        \item \SlidemintTextbf{Free of charge} for academia/public and for \SlidemintTextbf{AI SMEs} (innovation); other industry is \SlidemintEmph{pay-per-use}.
-        \item The JU allocates \SlidemintTextbf{35--50\,\%} of each system's capacity (petascale to pre-exascale/exascale).
-    \end{itemize}
+%     \vspace{0.8em}
+%     \begin{itemize}
+%         \item Pick the \SlidemintTextbf{access mode} that matches your project and audience (see \emph{Access modes that matter}).
+%         \item Prepare the application online and submit it before the call's cutoff.
+%         \item \SlidemintTextbf{Free of charge} for academia/public and for \SlidemintTextbf{AI SMEs} (innovation); other industry is \SlidemintEmph{pay-per-use}.
+%         \item The JU allocates \SlidemintTextbf{35--50\,\%} of each system's capacity (petascale to pre-exascale/exascale).
+%     \end{itemize}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{You apply to the JU, not to the hosting site.}
-\end{frame}
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{You apply to the JU, not to the hosting site.}
+% \end{frame}
 
 \begin{frame}
     \frametitle{Who can apply for which call}
@@ -1156,6 +1156,72 @@
     \textcolor{SlidemintMuted}{Porting to a new architecture is real work --- budget time for it.}
 \end{frame}
 
+\section{Closing}
+
+\begin{frame}[fragile]
+    \frametitle{Three takeaways}
+    \begin{enumerate}
+        \item \SlidemintTextbf{Ask for more: get GPU node hours and ask for export support to get the most out of it}
+        \item \SlidemintTextbf{Throughput} $\approx$ GPUs $\times$ reliability $\times$ queue $\times$ proposal latency $\times$ communication.\\
+              The cluster's \mintinline{bash}|sinfo| is the smallest factor of that product.
+        % \item \SlidemintTextbf{Climb the ladder:} desktop $\to$ university $\to$ state $\to$ federal \SlidemintTextbf{(NHR, GCS)} $\to$ EuroHPC.
+        \item \SlidemintTextbf{Workflow:} Small jobs, resumability, DAGs, one local source of truth, efficient code.
+    \end{enumerate}
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Free of charge $\neq$ free of effort; proposal time and setup time is real time.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Questions?}
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
+            \includegraphics[height=1cm]{graphics/minerva-logo.png}
+            \hspace{.6em}
+            \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
+        };
+    \end{tikzpicture}
+    \begin{center}
+        \textcolor{SlidemintMuted}{Dr.~Michael Tiemann (original slides: B\'alint Mucs\'anyi)}
+
+        \vspace{1.5em}
+
+        \begin{tabular}{cccc}
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://minerva4ai.eu}{\qrcode[height=2.0cm]{https://minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{minerva4ai.eu}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://best-practice-guides.minerva4ai.eu}{\qrcode[height=2.0cm]{https://best-practice-guides.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{Best Practice Guides}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://estimator.minerva4ai.eu}{\qrcode[height=2.0cm]{https://estimator.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{Needs Estimator}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://hpcgrants.minerva4ai.eu}{\qrcode[height=2.0cm]{https://hpcgrants.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{HPC Grant Studio}
+            \end{minipage}
+        \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+    \frametitle{References}
+    \bibliographystyle{plainnat}
+    \bibliography{references}
+\end{frame}
+
+\section*{Appendix}
+
 \section{How to use HPC}
 
 \begin{frame}[fragile]
@@ -1223,7 +1289,7 @@
         Data $\to$ explicit snapshots, backed up locally.
 
         \vspace{3em}
-        When \mintinline{bash}|$WORK| is in emergency maintenance and your only experiment config lives there, you are very stressed. Ask me how I know.
+        When \mintinline{bash}|$WORK| is in emergency maintenance and your only experiment config lives there, you are very stressed. Believe us.
         \end{column}
     \end{columns}
 \end{frame}
@@ -1357,68 +1423,5 @@ result_fields = [
 %     \SlidemintTextbf{The most underrated:} the one that tells you what you actually used.
 % \end{frame}
 
-\section{Closing}
-
-\begin{frame}[fragile]
-    \frametitle{Three takeaways}
-    \begin{enumerate}
-        \item \SlidemintTextbf{Ask for more: get GPU node hours and ask for export support to get the most out of it}
-        \item \SlidemintTextbf{Throughput} $\approx$ GPUs $\times$ reliability $\times$ queue $\times$ proposal latency $\times$ communication.\\
-              The cluster's \mintinline{bash}|sinfo| is the smallest factor of that product.
-        % \item \SlidemintTextbf{Climb the ladder:} desktop $\to$ university $\to$ state $\to$ federal \SlidemintTextbf{(NHR, GCS)} $\to$ EuroHPC.
-        \item \SlidemintTextbf{Workflow:} Small jobs, resumability, DAGs, one local source of truth, efficient code.
-    \end{enumerate}
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Free of charge $\neq$ free of effort; proposal time and setup time is real time.}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Questions?}
-    \begin{tikzpicture}[remember picture,overlay]
-        \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
-            \includegraphics[height=1cm]{graphics/minerva-logo.png}
-            \hspace{.6em}
-            \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
-        };
-    \end{tikzpicture}
-    \begin{center}
-        \textcolor{SlidemintMuted}{Dr.~Michael Tiemann (original slides: B\'alint Mucs\'anyi)}
-
-        \vspace{1.5em}
-
-        \begin{tabular}{cccc}
-            \begin{minipage}[c]{0.21\textwidth}
-                \centering
-                \href{https://minerva4ai.eu}{\qrcode[height=2.0cm]{https://minerva4ai.eu}}\\[0.5em]
-                \textcolor{SlidemintMuted}{minerva4ai.eu}
-            \end{minipage}
-            &
-            \begin{minipage}[c]{0.21\textwidth}
-                \centering
-                \href{https://best-practice-guides.minerva4ai.eu}{\qrcode[height=2.0cm]{https://best-practice-guides.minerva4ai.eu}}\\[0.5em]
-                \textcolor{SlidemintMuted}{Best Practice Guides}
-            \end{minipage}
-            &
-            \begin{minipage}[c]{0.21\textwidth}
-                \centering
-                \href{https://estimator.minerva4ai.eu}{\qrcode[height=2.0cm]{https://estimator.minerva4ai.eu}}\\[0.5em]
-                \textcolor{SlidemintMuted}{Needs Estimator}
-            \end{minipage}
-            &
-            \begin{minipage}[c]{0.21\textwidth}
-                \centering
-                \href{https://hpcgrants.minerva4ai.eu}{\qrcode[height=2.0cm]{https://hpcgrants.minerva4ai.eu}}\\[0.5em]
-                \textcolor{SlidemintMuted}{HPC Grant Studio}
-            \end{minipage}
-        \end{tabular}
-    \end{center}
-\end{frame}
-
-\begin{frame}[allowframebreaks]
-    \frametitle{References}
-    \bibliographystyle{plainnat}
-    \bibliography{references}
-\end{frame}
 
 \end{document}

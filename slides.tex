@@ -11,12 +11,13 @@
 \usepackage{figmint}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{qrcode}
 
 \title{HPC in Europe}
-\subtitle{Through an Academic's Lens}
+\subtitle{\texorpdfstring{Apply for \SlidemintEmph{free GPU node hours} today!}{Apply for free GPU node hours today!}}
 \author{Dr.~Michael Tiemann}
 \institute{Project Minerva\\T\"ubingen AI Center\\University of T\"ubingen}
-\date{May 20, 2026}
+\date{Sep 15, 2026}
 
 \newcommand*{\EUR}[1]{\mbox{€\,#1}}
 
@@ -39,9 +40,9 @@
                 \scriptsize\textcolor{SlidemintMuted}{Original talk: B\'alint Mucs\'anyi \,\textbar\, \href{https://github.com/bmucsanyi/hpc_talk}{github.com/bmucsanyi/hpc\_talk}}
             };
             \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
-                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
-                \hspace{.6em}
                 \includegraphics[height=1cm]{graphics/minerva-logo.png}
+                \hspace{.6em}
+                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
             };
         \else
             \node[anchor=west,xshift=-3mm] at (current page.west) {
@@ -58,9 +59,9 @@
                 \scriptsize\textcolor{SlidemintMuted}{Original talk: B\'alint Mucs\'anyi \,\textbar\, \href{https://github.com/bmucsanyi/hpc_talk}{github.com/bmucsanyi/hpc\_talk}}
             };
             \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
-                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
-                \hspace{.6em}
                 \includegraphics[height=1cm]{graphics/minerva-logo.png}
+                \hspace{.6em}
+                \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
             };
         \fi
         \node[anchor=center,xshift=.1\paperwidth] at (current page.center) {
@@ -82,6 +83,17 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Who am I?}
+    \framesubtitle{Dr.~Michael Tiemann}
+    \begin{itemize}
+        \item \SlidemintTextbf{PhD} at the Max Planck Institute for Intelligent Systems and the University of T\"ubingen (2018).
+        \item \SlidemintTextbf{Bosch Center for Artificial Intelligence (BCAI)} from 2017--2025.
+        \item Co-founded the start-up \SlidemintTextbf{DenkBox GmbH} in 2025.
+        \item \SlidemintEmph{Post-doctoral researcher} at the T\"ubingen AI Center, working on \SlidemintTextbf{Project Minerva}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
     \frametitle{The GPU need of an ML/CV PhD}
     \framesubtitle{Not a niche problem}
     \begin{itemize}
@@ -93,6 +105,27 @@
 
     \vspace{2em}
     \textcolor{SlidemintMuted}{One GPU already costs a small fortune: the price tag is the next section.}
+\end{frame}
+
+\begin{frame}
+    \frametitle{From one desktop GPU to EuroHPC}
+    \framesubtitle{The compute ladder}
+    \begin{center}
+    \begin{tabular}{@{}>{\bfseries\color{SlidemintStrong}}r@{\;}c@{\quad}l@{}}
+        Desktop        &       & 1--2 GPUs, always yours; prototyping and debugging \\
+                       & $\downarrow$ & \\
+        University     &       & group cluster / group quota; in T\"ubingen: ML Cloud \\
+                       & $\downarrow$ & \\
+        State          &       & Helix (Baden-W\"urttemberg) \\
+                       & $\downarrow$ & \\
+        Federal        &       & NHR (national Tier-2), GCS (national Tier-1) \\
+                       & $\downarrow$ & \\
+        \SlidemintTextbf{EuroHPC JU} & & the European fleet: MareNostrum 5, LUMI, Leonardo, JUPITER \\
+    \end{tabular}
+    \end{center}
+
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Each rung up buys scale --- and costs latency. Proposal time is part of throughput.}
 \end{frame}
 
 % ----------------------------------------------------------------------
@@ -110,44 +143,144 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    \frametitle{From one desktop GPU to EuroHPC}
-    \framesubtitle{The compute ladder}
-    \begin{center}
-    \begin{tabular}{@{}>{\bfseries\color{SlidemintStrong}}r@{\;}c@{\quad}l@{}}
-        Desktop        &       & 1--2 GPUs, always yours; prototyping and debugging \\
-                       & $\downarrow$ & \\
-        University     &       & group cluster / group quota; e.g.\ the ML Cloud \\
-                       & $\downarrow$ & \\
-        State          &       & Helix (Baden-W\"urttemberg) \\
-                       & $\downarrow$ & \\
-        Federal        &       & NHR (national Tier-2), GCS (national Tier-1) \\
-                       & $\downarrow$ & \\
-        \SlidemintTextbf{EuroHPC JU} & & the European fleet: MareNostrum 5, LUMI, Leonardo, JUPITER \\
-    \end{tabular}
-    \end{center}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Each rung up buys scale --- and costs latency. Proposal time is part of throughput.}
+\begin{frame}
+    \frametitle{Why a deep-learning researcher ever needs this}
+    \framesubtitle{Parameter spaces are huge --- and they live in VRAM}
+    Balint's work: \SlidemintTextbf{optimization}, \SlidemintTextbf{model editing}, \SlidemintTextbf{unlearning}: all of them live in \SlidemintEmph{parameter space}.
+
+    \vspace{0.5em}
+    Working in parameter space means representing things like:
+    \begin{itemize}
+        \item gradients (1 copy of the model)
+        \item Fisher / Hessian (formally: $d \times d$, with $d$ in the millions to billions)
+        \item rank-$k$ subspaces from generalized eigenproblems
+    \end{itemize}
+
+    \vspace{0.8em}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{ResNet-50} \citep{he2016resnet}
+        \begin{itemize}
+            \item one fp32 copy: $\sim$100\,MB
+            \item full Hessian: $\sim$2.6\,PB
+            \item rank-1000 Fisher approximation: $\sim$\SlidemintTextbf{100\,GB}
+        \end{itemize}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Gemma 2 2B} \citep{gemmateam2024gemma2}
+        \begin{itemize}
+            \item one fp16 copy: $\sim$5\,GB
+            \item rank-64 dense subspace: $\sim$\SlidemintTextbf{320\,GB}
+            \item plus fp16 numerical instability
+        \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Each ``copy of the model'' is a unit of VRAM --- and they quickly add up. \SlidemintEmph{VRAM} is what makes today's GPU needs so expensive and what forces you onto big machines.}
 \end{frame}
 
 
+\begin{frame}
+    \frametitle{Consumer-grade GPUs}
+    \framesubtitle{Local development and debugging}
+   
+    \vspace{0.6em}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{GeForce RTX} (desktop)
+        \begin{itemize}
+            \item consumer gaming cards; CUDA-capable, but \SlidemintEmph{no NVLink}, no ECC, no datacenter drivers.
+            \item great for \SlidemintEmph{prototyping} and small fine-tunes.
+            \item VRAM is the hard limit: 8--24\,GB on typical models.
+        \end{itemize}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{NVIDIA Jetson} (edge / embedded)
+        \begin{itemize}
+            \item system-on-module: GPU + CPU + RAM on one board.
+            \item \SlidemintTextbf{Jetson Orin Nano / NX / AGX Orin}: 8--64\,GB unified memory, 20--275\,TOPS.
+            \item low power (5--60\,W), fanless options; for \SlidemintEmph{edge inference}, robotics, and demos.
+        \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{1em}
+    \SlidemintTextbf{NVIDIA Spark} is the newest entry: a compact, low-power
+    \SlidemintEmph{personal AI workstation} aimed at running small local models
+    and edge workloads --- a step up from Jetson, a step down from a datacenter GPU.
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Ideally, you have some option for local development and debugging---but it's probably not enough}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{ML Cloud on paper}
+    \framesubtitle{A university example cluster}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Galvani} (A100s, SLURM)
+        \begin{itemize}
+            \item 281 A100s
+            \item $22 \times 8$, $11 \times 9$, $2 \times 3$ nodes
+        \end{itemize}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Ferranti} (H100s, SLURM)
+        \begin{itemize}
+            \item 120 H100s in $15 \times 8$ nodes
+            \item 5 nodes: 192 CPUs, 2.06\,TB RAM
+            \item 10 nodes: 384 CPUs, 2.32\,TB RAM
+            \item Very strong NDR400 InfiniBand fabric
+        \end{itemize}
+        \end{column}
+    \end{columns}
+    \vspace{2em}
+    \textcolor{SlidemintMuted}{Sounds like a lot. More than enough. Until things stop working.}
+\end{frame}
 
 % \begin{frame}
-%     \frametitle{What this talk is}
-%     \framesubtitle{And what it is not}
-%     \SlidemintTextbf{Not} HPC 101: most of you have already used a cluster.
+%     \frametitle{ML Cloud in practice}
+%     \begin{itemize}
+%         \item \SlidemintTextbf{Galvani:} 36 concurrent jobs, 36 GPUs.
+%         \item \SlidemintTextbf{Ferranti:} 8 concurrent jobs, no GPU cap. So in principle: 8 nodes $=$ \SlidemintTextbf{64 H100}.
+%         \item Caps are \SlidemintEmph{undocumented} and \SlidemintEmph{ad-hoc}; they can move again at any time.
+%     \end{itemize}
 
-%     \vspace{0.5em}
-%     What we'll be centered around: \SlidemintEmph{throughput is not \texttt{sinfo}}.
-%     $$\text{throughput} \approx \text{GPUs} \times \text{reliability} \times \text{queue} \times \text{proposal latency} \times \text{communication} \times \text{best practices}$$
-
-%     \vspace{0.5em}
-%     We climb the \SlidemintTextbf{GPU ladder}: \SlidemintTextbf{desktop} $\to$ \SlidemintTextbf{university} $\to$ \SlidemintTextbf{state} $\to$ \SlidemintTextbf{federal} $\to$ \SlidemintTextbf{Europe}.
-
-%     \vspace{0.5 em}
-%     Then: how to make the most out of the resources.
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{Bulk requests make scheduling less efficient. 8 nodes for 3 days takes about a day of queue.}
 % \end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Compute is not to be taken for granted}
+    \framesubtitle{A six-week ML Cloud weather report}
+    {
+    \footnotesize
+    \begin{tabular}{@{}r l@{}}
+        \textcolor{SlidemintMuted}{Apr 07, 2026} & Galvani: DNS issues \\
+        \textcolor{SlidemintMuted}{Apr 08, 2026} & Galvani: scheduled maintenance starts \\
+        \textcolor{SlidemintMuted}{Apr 09, 2026} & Galvani back; \SlidemintTextbf{queue not preserved} \\
+        \textcolor{SlidemintMuted}{Apr 09, 2026} & Ferranti: downtime needed \\
+        \textcolor{SlidemintMuted}{Apr 15, 2026} & Maintenance extended \\
+        \textcolor{SlidemintMuted}{Apr 16, 2026} & New Weka vs new OS: workaround found \\
+        \textcolor{SlidemintMuted}{Apr 17, 2026} & Ferranti back, but only via \mintinline{text}|ferranti-login2| \\
+        \textcolor{SlidemintMuted}{Apr 30, 2026} & Ferranti login restricted \\
+        \textcolor{SlidemintMuted}{Apr 30, 2026} & Back online; \SlidemintTextbf{SLURM queue not preserved} \\
+        \textcolor{SlidemintMuted}{May 06, 2026} & Galvani login-node reboots \\
+        \textcolor{SlidemintMuted}{May 12, 2026} & Galvani: electrical works on cooling \\
+        \textcolor{SlidemintMuted}{May 13, 2026} & Emergency Lustre maintenance \\
+    \end{tabular}
+    \par
+    }
+    \vspace{0.8em}
+    \SlidemintEmph{With more LLMs on the hunt for CVEs, emergency downtimes and reboots become more frequent}
+\end{frame}
+
 
 \section{The cost of compute}
 
@@ -205,47 +338,21 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Why a deep-learning researcher ever needs this}
-    \framesubtitle{Parameter spaces are huge}
-    My work: \SlidemintTextbf{optimization}, \SlidemintTextbf{model editing}, \SlidemintTextbf{unlearning}: all of them live in \SlidemintEmph{parameter space}.
-
-    \vspace{0.5em}
-    Working in parameter space means representing things like:
-    \begin{itemize}
-        \item gradients (1 copy of the model)
-        \item Fisher / Hessian (formally: $d \times d$, with $d$ in the millions to billions)
-        \item rank-$k$ subspaces from generalized eigenproblems
-    \end{itemize}
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Each ``copy of the model'' is a unit of VRAM and they quickly add up.}
-\end{frame}
-
-\begin{frame}
-    \frametitle{The parameter-space wall}
-    \framesubtitle{One small model, one not-so-large LLM}
-    \begin{columns}[t]
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{ResNet-50} \citep{he2016resnet}
-        \begin{itemize}
-            \item one fp32 copy: $\sim$100\,MB
-            \item full Hessian: $\sim$2.6\,PB
-            \item rank-1000 Fisher approximation: $\sim$\SlidemintTextbf{100\,GB}
-        \end{itemize}
-        \end{column}
-
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{Gemma 2 2B} \citep{gemmateam2024gemma2}
-        \begin{itemize}
-            \item one fp16 copy: $\sim$5\,GB
-            \item rank-64 dense subspace: $\sim$\SlidemintTextbf{320\,GB}
-            \item plus fp16 numerical instability
-        \end{itemize}
-        \end{column}
-    \end{columns}
+    \frametitle{Idealized vs realistic throughput}
+    \framesubtitle{If the caps were the only constraint}
+    \begin{center}
+    \begin{tabular}{@{}l r r@{}}
+        \toprule
+            & \SlidemintTextbf{Galvani} (A100) & \SlidemintTextbf{Ferranti} (H100) \\
+        \midrule
+        Idealized weekly throughput & 12{,}264 GPU-h & 20{,}160 GPU-h \\
+        Realistic (downtime + queue + crashes)      & \multicolumn{2}{c}{\SlidemintTextbf{$\sim$3--5\,\%} of the above} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
 
     \vspace{2em}
-    \textcolor{SlidemintMuted}{The ``scalable'' solution is also expensive.}
+    \textcolor{SlidemintMuted}{And this is not counting for debugging and restarting of failed jobs.}
 \end{frame}
 
 \begin{frame}
@@ -316,130 +423,143 @@
         A100 & Modern academic baseline. HBM2, 1.55--2.04\,TB/s, TF32 and BF16. \newline Many models run faster without you touching them. \\
         H100 & HBM3 at 3.35\,TB/s, 4th-gen tensor cores, FP8, Transformer Engine. \newline NVIDIA's own benchmarks: $\sim$3$\times$ BF16 GEMM, $\sim$5$\times$ FP8 GEMM vs A100. \\
         H200 & Same Hopper compute as H100. \newline \SlidemintTextbf{+76\,\% memory}, \SlidemintTextbf{+43\,\% bandwidth}. \newline A gift for memory-intensive workload. \\
-        MI250X & EuroHPC's most-used accelerator (LUMI-G). \newline \SlidemintTextbf{ROCm}, not CUDA. \newline Not a drop-in for CUDA-optimized code.
     \end{tabular}
+    }
+    \vspace{1.2em}
+
+    {\footnotesize\itshape
+    \SlidemintTextbf{MI250X} (AMD, LUMI-G): similar story, but \SlidemintTextbf{ROCm}, not CUDA --- now you also need to \SlidemintEmph{port your code} to another backend.
     }
 \end{frame}
 
-\section{HPC in T\"ubingen}
-
 \begin{frame}
-    \frametitle{ML Cloud on paper}
-    \begin{columns}[t]
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{Galvani} (A100s, SLURM)
-        \begin{itemize}
-            \item 281 A100s
-            \item $22 \times 8$, $11 \times 9$, $2 \times 3$ nodes
-        \end{itemize}
-        \end{column}
-
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{Ferranti} (H100s, SLURM)
-        \begin{itemize}
-            \item 120 H100s in $15 \times 8$ nodes
-            \item 5 nodes: 192 CPUs, 2.06\,TB RAM
-            \item 10 nodes: 384 CPUs, 2.32\,TB RAM
-            \item Very strong NDR400 InfiniBand fabric
-        \end{itemize}
-        \end{column}
-    \end{columns}
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Sounds like a lot. More than enough. Until things stop working.}
-\end{frame}
-
-\begin{frame}
-    \frametitle{ML Cloud in practice}
-    \begin{itemize}
-        \item \SlidemintTextbf{Galvani:} 36 concurrent jobs, 36 GPUs.
-        \item \SlidemintTextbf{Ferranti:} 8 concurrent jobs, no GPU cap. So in principle: 8 nodes $=$ \SlidemintTextbf{64 H100}.
-        \item Caps are \SlidemintEmph{undocumented} and \SlidemintEmph{ad-hoc}; they can move again at any time.
-    \end{itemize}
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Bulk requests make scheduling less efficient. 8 nodes for 3 days takes about a day of queue.}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Compute is not to be taken for granted}
-    \framesubtitle{A six-week ML Cloud weather report}
-    {
-    \footnotesize
-    \begin{tabular}{@{}r l@{}}
-        \textcolor{SlidemintMuted}{07 Apr} & Galvani: DNS issues \\
-        \textcolor{SlidemintMuted}{08 Apr} & Galvani: scheduled maintenance starts \\
-        \textcolor{SlidemintMuted}{09 Apr} & Galvani back; \SlidemintTextbf{queue not preserved} \\
-        \textcolor{SlidemintMuted}{09 Apr} & Ferranti: downtime needed \\
-        \textcolor{SlidemintMuted}{15 Apr} & Maintenance extended \\
-        \textcolor{SlidemintMuted}{16 Apr} & New Weka vs new OS: workaround found \\
-        \textcolor{SlidemintMuted}{17 Apr} & Ferranti back, but only via \mintinline{text}|ferranti-login2| \\
-        \textcolor{SlidemintMuted}{30 Apr} & Ferranti login restricted \\
-        \textcolor{SlidemintMuted}{30 Apr} & Back online; \SlidemintTextbf{SLURM queue not preserved} \\
-        \textcolor{SlidemintMuted}{06 May} & Galvani login-node reboots \\
-        \textcolor{SlidemintMuted}{12 May} & Galvani: electrical works on cooling \\
-        \textcolor{SlidemintMuted}{13 May} & Emergency Lustre maintenance \\
-    \end{tabular}
-    \par
-    }
-    \vspace{0.8em}
-    \SlidemintEmph{I need options\dots~Multiple clusters can't be down at the same time, right?}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Idealized vs realistic throughput}
-    \framesubtitle{If the caps were the only constraint}
     \begin{center}
-    \begin{tabular}{@{}l r r@{}}
-        \toprule
-            & \SlidemintTextbf{Galvani} (A100) & \SlidemintTextbf{Ferranti} (H100) \\
-        \midrule
-        Idealized weekly throughput & 12{,}264 GPU-h & 20{,}160 GPU-h \\
-        Realistic (downtime + queue + crashes)      & \multicolumn{2}{c}{\SlidemintTextbf{$\sim$3--5\,\%} of the above} \\
-        \bottomrule
-    \end{tabular}
+        \Large
+        This is where most PhD students stop looking for more resources.\\
+        \vspace{1em}
+        \SlidemintEmph{But there is so much more.}
     \end{center}
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Before counting my own bugs.}
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{MPI cluster}
-    \framesubtitle{A different approach to HPC}
-    \SlidemintTextbf{Hardware:} 398 A100 (62 nodes) + 216 H100 (34 nodes). All at the same time, in principle.
+% \section{HPC in T\"ubingen}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{Scheduler:} HTCondor, not SLURM. High-throughput computing culture.
+% \begin{frame}
+%     \frametitle{ML Cloud on paper}
+%     \begin{columns}[t]
+%         \begin{column}{0.49\textwidth}
+%         \SlidemintTextbf{Galvani} (A100s, SLURM)
+%         \begin{itemize}
+%             \item 281 A100s
+%             \item $22 \times 8$, $11 \times 9$, $2 \times 3$ nodes
+%         \end{itemize}
+%         \end{column}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{Cluster Banking System:}
-    \begin{itemize}
-        \item a regular ``cluster salary'' in cluster dollars
-        \item bid with \mintinline{bash}|condor_submit_bid|; range 1--2000
-        \item your bid is your valuation; you pay the running price
-        \item unused money is taxed
-        \item run out badly, get your jobs auto-killed
-    \end{itemize}
-\end{frame}
+%         \begin{column}{0.49\textwidth}
+%         \SlidemintTextbf{Ferranti} (H100s, SLURM)
+%         \begin{itemize}
+%             \item 120 H100s in $15 \times 8$ nodes
+%             \item 5 nodes: 192 CPUs, 2.06\,TB RAM
+%             \item 10 nodes: 384 CPUs, 2.32\,TB RAM
+%             \item Very strong NDR400 InfiniBand fabric
+%         \end{itemize}
+%         \end{column}
+%     \end{columns}
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{Sounds like a lot. More than enough. Until things stop working.}
+% \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{MPI cluster}
-    \SlidemintTextbf{Execution nodes have no direct internet.} Pre-download models, data, caches.
+% \begin{frame}
+%     \frametitle{ML Cloud in practice}
+%     \begin{itemize}
+%         \item \SlidemintTextbf{Galvani:} 36 concurrent jobs, 36 GPUs.
+%         \item \SlidemintTextbf{Ferranti:} 8 concurrent jobs, no GPU cap. So in principle: 8 nodes $=$ \SlidemintTextbf{64 H100}.
+%         \item Caps are \SlidemintEmph{undocumented} and \SlidemintEmph{ad-hoc}; they can move again at any time.
+%     \end{itemize}
 
-    \vspace{0.5em}
-    A minimal GPU submit:
-    \begin{minted}{ini}
-        executable     = run_train.sh
-        arguments      = --seed $(seed)
-        request_cpus   = 4
-        request_memory = 32000
-        request_gpus   = 1
-        queue seed from seeds.txt
-    \end{minted}
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{Bulk requests make scheduling less efficient. 8 nodes for 3 days takes about a day of queue.}
+% \end{frame}
 
-    \vspace{0.3em}
-    \mintinline{bash}|condor_submit_bid 50 train.sub|
-\end{frame}
+% \begin{frame}[fragile]
+%     \frametitle{Compute is not to be taken for granted}
+%     \framesubtitle{A six-week ML Cloud weather report}
+%     {
+%     \footnotesize
+%     \begin{tabular}{@{}r l@{}}
+%         \textcolor{SlidemintMuted}{Apr 07, 2026} & Galvani: DNS issues \\
+%         \textcolor{SlidemintMuted}{Apr 08, 2026} & Galvani: scheduled maintenance starts \\
+%         \textcolor{SlidemintMuted}{Apr 09, 2026} & Galvani back; \SlidemintTextbf{queue not preserved} \\
+%         \textcolor{SlidemintMuted}{Apr 09, 2026} & Ferranti: downtime needed \\
+%         \textcolor{SlidemintMuted}{Apr 15, 2026} & Maintenance extended \\
+%         \textcolor{SlidemintMuted}{Apr 16, 2026} & New Weka vs new OS: workaround found \\
+%         \textcolor{SlidemintMuted}{Apr 17, 2026} & Ferranti back, but only via \mintinline{text}|ferranti-login2| \\
+%         \textcolor{SlidemintMuted}{Apr 30, 2026} & Ferranti login restricted \\
+%         \textcolor{SlidemintMuted}{Apr 30, 2026} & Back online; \SlidemintTextbf{SLURM queue not preserved} \\
+%         \textcolor{SlidemintMuted}{May 06, 2026} & Galvani login-node reboots \\
+%         \textcolor{SlidemintMuted}{May 12, 2026} & Galvani: electrical works on cooling \\
+%         \textcolor{SlidemintMuted}{May 13, 2026} & Emergency Lustre maintenance \\
+%     \end{tabular}
+%     \par
+%     }
+%     \vspace{0.8em}
+%     \SlidemintEmph{I need options\dots~Multiple clusters can't be down at the same time, right?}
+% \end{frame}
+
+% \begin{frame}
+%     \frametitle{Idealized vs realistic throughput}
+%     \framesubtitle{If the caps were the only constraint}
+%     \begin{center}
+%     \begin{tabular}{@{}l r r@{}}
+%         \toprule
+%             & \SlidemintTextbf{Galvani} (A100) & \SlidemintTextbf{Ferranti} (H100) \\
+%         \midrule
+%         Idealized weekly throughput & 12{,}264 GPU-h & 20{,}160 GPU-h \\
+%         Realistic (downtime + queue + crashes)      & \multicolumn{2}{c}{\SlidemintTextbf{$\sim$3--5\,\%} of the above} \\
+%         \bottomrule
+%     \end{tabular}
+%     \end{center}
+
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{Before counting Balint's own bugs.}
+% \end{frame}
+
+% \begin{frame}[fragile]
+%     \frametitle{MPI cluster}
+%     \framesubtitle{A different approach to HPC}
+%     \SlidemintTextbf{Hardware:} 398 A100 (62 nodes) + 216 H100 (34 nodes). All at the same time, in principle.
+
+%     \vspace{0.6em}
+%     \SlidemintTextbf{Scheduler:} HTCondor, not SLURM. High-throughput computing culture.
+
+%     \vspace{0.6em}
+%     \SlidemintTextbf{Cluster Banking System:}
+%     \begin{itemize}
+%         \item a regular ``cluster salary'' in cluster dollars
+%         \item bid with \mintinline{bash}|condor_submit_bid|; range 1--2000
+%         \item your bid is your valuation; you pay the running price
+%         \item unused money is taxed
+%         \item run out badly, get your jobs auto-killed
+%     \end{itemize}
+% \end{frame}
+
+% \begin{frame}[fragile]
+%     \frametitle{MPI cluster}
+%     \SlidemintTextbf{Execution nodes have no direct internet.} Pre-download models, data, caches.
+
+%     \vspace{0.5em}
+%     A minimal GPU submit:
+%     \begin{minted}{ini}
+%         executable     = run_train.sh
+%         arguments      = --seed $(seed)
+%         request_cpus   = 4
+%         request_memory = 32000
+%         request_gpus   = 1
+%         queue seed from seeds.txt
+%     \end{minted}
+
+%     \vspace{0.3em}
+%     \mintinline{bash}|condor_submit_bid 50 train.sub|
+% \end{frame}
 
 \section{HPC in Germany}
 
@@ -463,6 +583,29 @@
         \item rebuttal panic, need signal fast $\Rightarrow$ stay on the ML Cloud.
     \end{itemize}
 
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Bavarian analog: LRZ}
+    \framesubtitle{Garching's state-level cluster, the Helix of Bavaria}
+    \SlidemintTextbf{What it is:} the Leibniz-Rechenzentrum (LRZ) in Garching serves Munich \SlidemintEmph{and all Bavarian universities} --- the direct counterpart to Helix/bwHPC.
+
+    \vspace{0.5em}
+    \SlidemintTextbf{Two systems, one state layer:}
+    \begin{itemize}
+        \item \SlidemintTextbf{Linux Cluster (CoolMUC-4)}: CPU-only, SLURM, \SlidemintEmph{free} for Bavarian universities, \SlidemintEmph{first-come-first-serve}, no budget limits.
+        \item \SlidemintTextbf{AI Systems (BayernKI)}: the GPU side, SLURM, access \SlidemintEmph{on request} via an AI-enabled project.
+    \end{itemize}
+
+    \vspace{0.5em}
+    \SlidemintTextbf{AI Systems GPU partitions:}
+    \begin{itemize}
+        \item \SlidemintTextbf{120 $\times$ H100} (94\,GB) + \SlidemintTextbf{52 $\times$ A100} (80\,GB) + V100/P100.
+        \item No H200s yet --- Helix's 24 H200s are newer than anything at LRZ.
+    \end{itemize}
+
+    \vspace{1em}
+    \textcolor{SlidemintMuted}{Same rung of the ladder as Helix: state-level, low proposal latency, but \SlidemintEmph{no allocation review} --- just an account and a project.}
 \end{frame}
 
 \begin{frame}
@@ -509,70 +652,70 @@
     \SlidemintTextbf{JUPITER is dual:} EuroHPC- \SlidemintEmph{and} GCS-relevant.
 \end{frame}
 
-\begin{frame}
-    \frametitle{State-level HPC in Germany}
-    \framesubtitle{Baden-W\"urttemberg as the running example}
-    Each state funds its own layer; in Baden-W\"urttemberg that is \SlidemintTextbf{bwHPC}:
-    \begin{itemize}
-        \item \SlidemintTextbf{bwUniCluster 3.0} (KIT): Tier-3 basic supply for all BW universities; \SlidemintEmph{free} for members, acknowledge in publications.
-        \item \SlidemintTextbf{4 bwForClusters}: research-domain clusters (Tier-3) for specific architectures and software.
-        \item \SlidemintTextbf{HoreKa} (NHR@KIT): Tier-2, $\sim$60{,}000 cores, $\sim$750 A100/H100 GPUs, $\sim$17 PFLOPS.
-    \end{itemize}
+% \begin{frame}
+%     \frametitle{State-level HPC in Germany}
+%     \framesubtitle{Baden-W\"urttemberg as the running example}
+%     Each state funds its own layer; in Baden-W\"urttemberg that is \SlidemintTextbf{bwHPC}:
+%     \begin{itemize}
+%         \item \SlidemintTextbf{bwUniCluster 3.0} (KIT): Tier-3 basic supply for all BW universities; \SlidemintEmph{free} for members, acknowledge in publications.
+%         \item \SlidemintTextbf{4 bwForClusters}: research-domain clusters (Tier-3) for specific architectures and software.
+%         \item \SlidemintTextbf{HoreKa} (NHR@KIT): Tier-2, $\sim$60{,}000 cores, $\sim$750 A100/H100 GPUs, $\sim$17 PFLOPS.
+%     \end{itemize}
 
-    \vspace{0.8em}
-    Other states have their own \SlidemintEmph{state} layer, distinct from the national one: \SlidemintTextbf{GWDG Emmy/Grete} (G\"ottingen, for the North/HLRN); for Bavaria that is the \SlidemintTextbf{LRZ Linux Cluster} (first-come-first-serve for Bavarian users).
+%     \vspace{0.8em}
+%     Other states have their own \SlidemintEmph{state} layer, distinct from the national one: \SlidemintTextbf{GWDG Emmy/Grete} (G\"ottingen, for the North/HLRN); for Bavaria that is the \SlidemintTextbf{LRZ Linux Cluster} (first-come-first-serve for Bavarian users).
 
-    Note: \SlidemintTextbf{LRZ} (Garching) is \SlidemintEmph{not} a pure state centre --- its supercomputer \textbf{SuperMUC-NG} is a \SlidemintTextbf{GCS (national Tier-1)} resource (next slide).
+%     Note: \SlidemintTextbf{LRZ} (Garching) is \SlidemintEmph{not} a pure state centre --- its supercomputer \textbf{SuperMUC-NG} is a \SlidemintTextbf{GCS (national Tier-1)} resource (next slide).
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{State HPC is the natural next step after the university cluster --- \SlidemintEmph{no proposal latency} to speak of.}
-\end{frame}
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{State HPC is the natural next step after the university cluster --- \SlidemintEmph{no proposal latency} to speak of.}
+% \end{frame}
 
-\begin{frame}
-    \frametitle{LRZ: the Garching supercomputer centre}
-    \framesubtitle{Bavarian Academy; home of SuperMUC-NG}
-    \SlidemintTextbf{What it is:} the Leibniz-Rechenzentrum on the Munich research campus ---- Bavaria's computing centre \SlidemintEmph{and} one of the three German GCS (Tier-1) centres.
+% \begin{frame}
+%     \frametitle{LRZ: the Garching supercomputer centre}
+%     \framesubtitle{Bavarian Academy; home of SuperMUC-NG}
+%     \SlidemintTextbf{What it is:} the Leibniz-Rechenzentrum on the Munich research campus ---- Bavaria's computing centre \SlidemintEmph{and} one of the three German GCS (Tier-1) centres.
 
-    \vspace{0.6em}
-    \SlidemintTextbf{GPU resources:}
-    \begin{itemize}
-        \item \textbf{SuperMUC-NG Phase 2}: $\sim$936 GPUs, but \SlidemintEmph{Intel Ponte Vecchio}, not NVIDIA --- not a CUDA machine.
-        \item \textbf{AI Systems}: NVIDIA \SlidemintTextbf{A100 / H100} partitions (access \SlidemintEmph{on request}).
-        \item \textbf{CoolMUC-4} / Linux Cluster: CPU-only, first-come-first-serve for \SlidemintEmph{Bavarian} users.
-    \end{itemize}
+%     \vspace{0.6em}
+%     \SlidemintTextbf{GPU resources:}
+%     \begin{itemize}
+%         \item \textbf{SuperMUC-NG Phase 2}: $\sim$936 GPUs, but \SlidemintEmph{Intel Ponte Vecchio}, not NVIDIA --- not a CUDA machine.
+%         \item \textbf{AI Systems}: NVIDIA \SlidemintTextbf{A100 / H100} partitions (access \SlidemintEmph{on request}).
+%         \item \textbf{CoolMUC-4} / Linux Cluster: CPU-only, first-come-first-serve for \SlidemintEmph{Bavarian} users.
+%     \end{itemize}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{Who can apply for GPU time:}
-    \begin{itemize}
-        \item \textbf{GCS route} (national, via GCS-JARDS): national GPU machine, need to show code works on Ponte Vecchio (or get prep-access, 7{,}000 GPU-h + porting help).
-        \item \textbf{AI Systems}: on request.
-        \item \textbf{If your code can't port}: LRZ explicitly points you to \SlidemintTextbf{NHR} (universities).
-    \end{itemize}
-\end{frame}
+%     \vspace{0.6em}
+%     \SlidemintTextbf{Who can apply for GPU time:}
+%     \begin{itemize}
+%         \item \textbf{GCS route} (national, via GCS-JARDS): national GPU machine, need to show code works on Ponte Vecchio (or get prep-access, 7{,}000 GPU-h + porting help).
+%         \item \textbf{AI Systems}: on request.
+%         \item \textbf{If your code can't port}: LRZ explicitly points you to \SlidemintTextbf{NHR} (universities).
+%     \end{itemize}
+% \end{frame}
 
-\begin{frame}
-    \frametitle{NHR application structure}
-    \framesubtitle{German Tier-2, one portal: NHR-JARDS}
-    \begin{center}
-    \begin{tabular}{@{}l l l@{}}
-        \toprule
-        \SlidemintTextbf{Project type} & \SlidemintTextbf{Size} & \SlidemintTextbf{Review / cadence} \\
-        \midrule
-        Starter           & $\leq$300k core-h, 1 yr & formal, \SlidemintEmph{rolling} \\
-        Test / Preparation& $\leq$300k core-h        & formal, \SlidemintEmph{rolling} \\
-        Compute (Normal)  & 300k--5M core-h \newline $<12.5$k GPU-h & Technical+Scientific Board, \SlidemintEmph{quarterly} \\
-        \bottomrule
-    \end{tabular}
-    \end{center}
+% \begin{frame}
+%     \frametitle{NHR application structure}
+%     \framesubtitle{German Tier-2, one portal: NHR-JARDS}
+%     \begin{center}
+%     \begin{tabular}{@{}l l l@{}}
+%         \toprule
+%         \SlidemintTextbf{Project type} & \SlidemintTextbf{Size} & \SlidemintTextbf{Review / cadence} \\
+%         \midrule
+%         Starter           & $\leq$300k core-h, 1 yr & formal, \SlidemintEmph{rolling} \\
+%         Test / Preparation& $\leq$300k core-h        & formal, \SlidemintEmph{rolling} \\
+%         Compute (Normal)  & 300k--5M core-h \newline $<12.5$k GPU-h & Technical+Scientific Board, \SlidemintEmph{quarterly} \\
+%         \bottomrule
+%     \end{tabular}
+%     \end{center}
 
-    \vspace{0.8em}
-    \begin{itemize}
-        \item PI must be a \SlidemintTextbf{scientist with a doctoral degree} at a German university; postdocs can use approved projects.
-        \item Free of charge; \SlidemintEmph{acknowledge} NHR in publications + annual status reports.
-        \item The 9 NHR centres pool resources for users nationwide (KIT, ZIB, TUD, FAU, NHR@SW, NHR-NORD, PC2, LRZ/TUM, 4CES).
-        \item AI Fast Track exists as a lighter entry.
-    \end{itemize}
-\end{frame}
+%     \vspace{0.8em}
+%     \begin{itemize}
+%         \item PI must be a \SlidemintTextbf{scientist with a doctoral degree} at a German university; postdocs can use approved projects.
+%         \item Free of charge; \SlidemintEmph{acknowledge} NHR in publications + annual status reports.
+%         \item The 9 NHR centres pool resources for users nationwide (KIT, ZIB, TUD, FAU, NHR@SW, NHR-NORD, PC2, LRZ/TUM, 4CES).
+%         \item AI Fast Track exists as a lighter entry.
+%     \end{itemize}
+% \end{frame}
 
 \begin{frame}
     \frametitle{A ladder from Tübingen}
@@ -596,29 +739,24 @@
 
 \begin{frame}
     \frametitle{The EuroHPC fleet}
-    \begin{tabular}{@{}>{\raggedleft\arraybackslash\bfseries\color{SlidemintStrong}}p{0.27\textwidth}@{\quad}p{0.66\textwidth}@{}}
-        MareNostrum 5 ACC & H100, 4 GPUs/node. CUDA-shaped, the most natural EuroHPC target for me. \\
+    \begin{tabular}{@{}>{\raggedleft\arraybackslash\bfseries\color{SlidemintStrong}}p{0.3\textwidth} >{\raggedright\arraybackslash}p{0.6\textwidth}@{}}
+        MareNostrum 5 ACC & H100, 4 GPUs/node. CUDA-shaped, a good "default". \\
         Leonardo Booster & A100. Large-scale but older. \\
         LUMI-G & AMD MI250X. Huge but ROCm. \\
         JUPITER Booster & GH200 Grace-Hopper. Europe's first exascale. \\
     \end{tabular}
 
-    \vspace{0.8em}
-    \SlidemintTextbf{The cost is heterogeneity:}
-    \begin{tabular}{@{}>{\raggedleft\arraybackslash\bfseries\color{SlidemintStrong}}p{0.27\textwidth}@{\quad}p{0.66\textwidth}@{}}
-        Ferranti H100 $\to$ MN5 H100 & a coding problem. \\
-        Ferranti H100 $\to$ LUMI-G & a software problem. \\
-    \end{tabular}
-
     \vspace{2em}
-    \textcolor{SlidemintMuted}{The tooling for this barely exists, but I'm on it.}
+    \textcolor{SlidemintMuted}{Each machine comes with different constraints, e.g.\ need to port your code, or no internet on compute nodes, etc.}
 \end{frame}
 
 \begin{frame}
     \frametitle{Two access ecosystems}
+    \framesubtitle{Who applies where}
     \begin{columns}[t]
         \begin{column}{0.49\textwidth}
         \SlidemintTextbf{Traditional HPC access}
+        \textcolor{SlidemintMuted}{\scriptsize academia \& research}
         \begin{itemize}
             \item Benchmark
             \item Development
@@ -629,41 +767,74 @@
 
         \begin{column}{0.49\textwidth}
         \SlidemintTextbf{AI Factory / AI-oriented}
+        \textcolor{SlidemintMuted}{\scriptsize SMEs, startups \& academia}
         \begin{itemize}
-            \item \SlidemintEmph{Playground}
-            \item \SlidemintEmph{AI for Science}
-            \item Collaborative EU Projects
-            \item \textcolor{SlidemintAlertTitle}{Industrial Fast Lane / Large Scale}
+            \item \SlidemintEmph{Playground} \textcolor{SlidemintMuted}{\scriptsize (SME/startup)}
+            \item \SlidemintEmph{Fast Lane} \textcolor{SlidemintMuted}{\scriptsize (SME/startup)}
+            \item \SlidemintEmph{Large Scale} \textcolor{SlidemintMuted}{\scriptsize (SME/startup)}
+            \item \SlidemintEmph{AI for Science} \textcolor{SlidemintMuted}{\scriptsize (academia)}
+            \item Collaborative EU Projects \textcolor{SlidemintMuted}{\scriptsize (both)}
         \end{itemize}
         \end{column}
     \end{columns}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{For an academic doing ML: \SlidemintTextbf{AI for Science} is the usual front door, not Regular.}
+    \vspace{1.5em}
+    \textcolor{SlidemintMuted}{Academia: \SlidemintTextbf{AI for Science} is the usual front door, but consider \SlidemintTextbf{Playground} to get started. SMEs/startups: \SlidemintTextbf{Playground $\to$ Fast Lane $\to$ Large Scale}.}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Access modes that matter}
-    {
-    \footnotesize
-    \begin{center}
-    \begin{tabular}{@{}l l l@{}}
-        \toprule
-        \SlidemintTextbf{Mode}          & \SlidemintTextbf{Timing}                       & \SlidemintTextbf{Realistic use} \\
-        \midrule
-        \SlidemintTextbf{Playground}    & permanent call, 2 working days & emergency / taster; ``industrial'' on paper \\
-        Benchmark              & monthly, 2--3 weeks & scaling evidence before Regular/Extreme \\
-        Development            & monthly, 2--3 weeks & porting, containerizing, debugging \\
-        \SlidemintTextbf{AI for Science}& 6 cutoffs/yr, $\leq$1 month, 6-month alloc. & academic ML papers; the main route \\
-        Regular                & 2 cutoffs/yr, $\sim$4 months & research programme, not deadline rescue \\
-        Extreme Scale          & 2 cutoffs/yr, $\sim$6 months & needs scaling evidence and a plan \\
-        \bottomrule
-    \end{tabular}
-    \end{center}
-    }
+% \begin{frame}
+%     \frametitle{Access modes that matter}
+%     \framesubtitle{Who can apply for which call}
+%     {
+%     \footnotesize
+%     \begin{center}
+%     \begin{tabular}{@{}l l l l@{}}
+%         \toprule
+%         \SlidemintTextbf{Mode}          & \SlidemintTextbf{Who}                        & \SlidemintTextbf{Timing} & \SlidemintTextbf{Realistic use} \\
+%         \midrule
+%         \SlidemintTextbf{Playground}    & AI SMEs/startups & permanent, 2 working days & taster / entry-level \\
+%         \SlidemintTextbf{Fast Lane}     & AI SMEs/startups & permanent, 4 working days & $\leq$50k GPU-h, 1--3 months \\
+%         \SlidemintTextbf{Large Scale}   & AI SMEs/startups & 2 cutoffs/mo, 10 working days & $>$50k GPU-h, 3--12 months \\
+%         \midrule
+%         \SlidemintTextbf{AI for Science}& academia, public & 6 cutoffs/yr, $\leq$1 month & academic ML papers; main route \\
+%         Benchmark              & academia, public & monthly, 2--3 weeks & scaling evidence \\
+%         Development            & academia, public & monthly, 2--3 weeks & porting, containerizing, debugging \\
+%         Regular                & academia, public & 2 cutoffs/yr, $\sim$4 months & research programme \\
+%         Extreme Scale          & academia, public & 2 cutoffs/yr, $\sim$6 months & needs scaling evidence and a plan \\
+%         \bottomrule
+%     \end{tabular}
+%     \end{center}
+%     }
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{EuroHPC is free of charge for eligible users; \SlidemintEmph{proposal time is not free}.}
+%     \vspace{1.5em}
+%     \textcolor{SlidemintMuted}{Free for eligible users (AI SMEs for innovation; academia/public). Other industry: \SlidemintEmph{pay-per-use} commercial access.}
+% \end{frame}
+
+\begin{frame}
+    \frametitle{What you can actually get}
+    \framesubtitle{Academia vs SMEs}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Academia / public}
+        \begin{itemize}
+            \item \SlidemintTextbf{AI for Science:} 20{,}000--90{,}000 node-h per partition \citep{eurohpc2026ai}. On 4-GPU nodes: 80{,}000--360{,}000 GPU-h.
+            \item \SlidemintTextbf{Regular:} up to 100{,}000 node-h on MN5 ACC, $\sim$4 months to access.
+            \item \SlidemintTextbf{Benchmark / Development:} small, fast allocations for evidence.
+        \end{itemize}
+        \end{column}
+
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{AI SMEs / startups}
+        \begin{itemize}
+            \item \SlidemintTextbf{Playground:} small fixed allocation, 2 working days, 1--3 months.
+            \item \SlidemintTextbf{Fast Lane:} up to \SlidemintTextbf{50{,}000 GPU-h}, 4 working days, 1--3 months.
+            \item \SlidemintTextbf{Large Scale:} \SlidemintTextbf{$>$50{,}000 GPU-h}, 3--12 months, 10 working days after cutoff.
+        \end{itemize}
+        \end{column}
+    \end{columns}
+
+    \vspace{1.5em}
+    \textcolor{SlidemintMuted}{Caveat today: Leonardo and MeluXina are unavailable for AI for Science; MN5/LUMI-G limited for Fast Lane/Large Scale due to demand.}
 \end{frame}
 
 \begin{frame}
@@ -676,132 +847,91 @@
                 xbar,
                 xmin=0, xmax=28,
                 ytick=data,
-                yticklabels={Playground, Benchmark, Development, AI for Science, Regular, Extreme},
+                yticklabels={Playground, Fast Lane, Large Scale, Benchmark, Development, AI for Science, Regular, Extreme},
                 xlabel={weeks to access},
-                bar width=0.32cm,
+                bar width=0.28cm,
                 enlarge y limits=0.12,
                 nodes near coords,
             ]
                 \addplot+[figmint horizontal bar]
                     coordinates {
                         (0.4,0)
-                        (2.5,1)
-                        (2.5,2)
-                        (4,3)
-                        (16,4)
-                        (24,5)
+                        (0.8,1)
+                        (2,2)
+                        (2.5,3)
+                        (2.5,4)
+                        (4,5)
+                        (16,6)
+                        (24,7)
                     };
             \end{axis}
         \end{figmintfigure}
     \end{center}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{The higher you aim, the more you have to wait.}
+    \vspace{1.5em}
+    \textcolor{SlidemintMuted}{SMEs get in fast (Playground/Fast Lane); academia's main route (AI for Science) takes about a month.}
 \end{frame}
 
-\begin{frame}
-    \frametitle{What an academic can actually get}
-    \SlidemintTextbf{AI for Science:} 20{,}000--90{,}000 \SlidemintEmph{node}-hours per partition \citep{eurohpc2026ai}.
-    On 4-GPU nodes (MN5 ACC, Leonardo et al.):
-    $$\text{20{,}000 node-h} \;\Rightarrow\; \SlidemintTextbf{80{,}000 GPU-h}, \quad \text{90{,}000 node-h} \;\Rightarrow\; \SlidemintTextbf{360{,}000 GPU-h}.$$
-    Single allocation, paper-scale to multi-paper-scale.
+% \begin{frame}[fragile]
+%     \frametitle{Balint's MN5 application}
+%     \begin{minted}{yaml}
+%         System: MareNostrum 5 ACC
+%         Requested: 5000 GPU-hours
+%         Max GPUs: 80
+%         Storage: 15 TB
+%         Transfer: 15 TB
+%         Duration: 2 months
+%         Workload: many one-node 4xH100 jobs
+%     \end{minted}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{Playground:} 5{,}000 GPU-hours, fixed. Goes by quickly!
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{80 GPUs flat-out exhausts the allocation in \SlidemintTextbf{$\sim$2.5 days}.}
+% \end{frame}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{Regular:} up to 100{,}000 node-h on MN5 ACC. $\sim$4 months to access.
+% \begin{frame}
+%     \frametitle{Deadlines vs access timelines}
+%     \begin{center}
+%     \begin{tabular}{@{}l l@{}}
+%         \toprule
+%         ICML 2026 full paper                    & 28 Jan 2026 AoE \\
+%         NeurIPS 2026 full paper                 & 6 May 2026 AoE \\
+%         ICLR 2027                               & $\sim$Sep 2026 AoE \\
+%         \midrule
+%         AI for Science 2026 cutoffs             & 27 Feb, 30 Apr, 30 Jun, 31 Aug, 30 Oct, 11 Dec \\
+%         \bottomrule
+%     \end{tabular}
+%     \end{center}
+% \end{frame}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Caveat today: Leonardo and MeluXina are unavailable for AI for Science due to demand.}
-\end{frame}
+% \begin{frame}
+%     \frametitle{What you can get}
+%     \framesubtitle{Academia's point-of-view and industry's point-of-view}
+%     \SlidemintTextbf{Academia}
+%     \begin{center}
+%         \begin{tabular}{@{}r l@{}}
+%             \toprule
+%             deadline panic         & local clusters / Helix / Playground or Development \\
+%             next paper             & \SlidemintTextbf{AI for Science} \\
+%             scaling evidence       & Benchmark \\
+%             research programme     & Regular or GCS \\
+%             foundation-model scale & Extreme (with scaling evidence already present) \\
+%             \bottomrule
+%         \end{tabular}
+%     \end{center}
 
-\begin{frame}[fragile]
-    \frametitle{My MN5 application}
-    \begin{minted}{yaml}
-        System: MareNostrum 5 ACC
-        Requested: 5000 GPU-hours
-        Max GPUs: 80
-        Storage: 15 TB
-        Transfer: 15 TB
-        Duration: 2 months
-        Workload: many one-node 4xH100 jobs
-    \end{minted}
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{80 GPUs flat-out exhausts the allocation in \SlidemintTextbf{$\sim$2.5 days}.}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Deadlines vs access timelines}
-    \begin{center}
-    \begin{tabular}{@{}l l@{}}
-        \toprule
-        ICML 2026 full paper                    & 28 Jan 2026 AoE \\
-        NeurIPS 2026 full paper                 & 6 May 2026 AoE \\
-        ICLR 2027                               & $\sim$Sep 2026 AoE \\
-        \midrule
-        AI for Science 2026 cutoffs             & 27 Feb, 30 Apr, 30 Jun, 31 Aug, 30 Oct, 11 Dec \\
-        \bottomrule
-    \end{tabular}
-    \end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Deadline-shaped ladder}
-    \begin{center}
-        \begin{tabular}{@{}r l@{}}
-            \toprule
-            deadline panic         & local clusters / Helix / Playground or Development \\
-            next paper             & \SlidemintTextbf{AI for Science} \\
-            scaling evidence       & Benchmark \\
-            research programme     & Regular or GCS \\
-            foundation-model scale & Extreme (with scaling evidence already present; you'll need it) \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{The application form}
-    See the PDF.
-
-    \vspace{0.8em}
-
-    For ML folks the two hard fields are:
-    \begin{enumerate}
-        \item \SlidemintTextbf{Scalability evidence}: why your code uses the machine efficiently.
-        \item \SlidemintTextbf{Resource justification}: why this many hours, and not $10\times$ less.
-    \end{enumerate}
-
-    \vspace{0.6em}
-    Value of \SlidemintTextbf{Benchmark} / \SlidemintTextbf{Development}: they give evidence for larger scales.
-
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{\SlidemintEmph{Climb the ladder} because aiming high first is a pain.}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{SLURM workflows can wildly differ}
-    Rule of thumb: plan as if compute nodes are not workstations with internet.
-
-    \vspace{0.4em}
-    Things that will not work with most EuroHPC setups:
-    \begin{itemize}
-        \item download model at job startup
-        \item real-time \texttt{wandb} monitoring from the node
-        \item creating envs on the cluster
-    \end{itemize}
-
-    \begin{minted}{bash}
-        rsync -av --delete --exclude .git/ ./project/ mn5:/path/to/project/
-
-        export HF_HOME=/scratch/$USER/hf_cache
-        export TRANSFORMERS_OFFLINE=1
-        export HF_DATASETS_OFFLINE=1
-        export WANDB_MODE=offline
-    \end{minted}
-\end{frame}
+%     \vspace{1em}
+%     \SlidemintTextbf{AI SME / startup}
+%     \begin{center}
+%         \begin{tabular}{@{}r l@{}}
+%             \toprule
+%             first try              & \SlidemintTextbf{Playground} (2 working days) \\
+%             medium project         & \SlidemintTextbf{Fast Lane} ($\leq$50k GPU-h) \\
+%             large-scale model      & \SlidemintTextbf{Large Scale} ($>$50k GPU-h) \\
+%             commercial product     & pay-per-use commercial access \\
+%             \bottomrule
+%         \end{tabular}
+%     \end{center}
+% \end{frame}
 
 \section{How to apply for EuroHPC compute}
 
@@ -812,9 +942,9 @@
 
     \vspace{0.8em}
     \begin{itemize}
-        \item Pick the \SlidemintTextbf{access mode} that matches your project (see \emph{Access modes that matter}).
+        \item Pick the \SlidemintTextbf{access mode} that matches your project and audience (see \emph{Access modes that matter}).
         \item Prepare the application online and submit it before the call's cutoff.
-        \item Access is currently \SlidemintTextbf{free of charge}.
+        \item \SlidemintTextbf{Free of charge} for academia/public and for \SlidemintTextbf{AI SMEs} (innovation); other industry is \SlidemintEmph{pay-per-use}.
         \item The JU allocates \SlidemintTextbf{35--50\,\%} of each system's capacity (petascale to pre-exascale/exascale).
     \end{itemize}
 
@@ -823,30 +953,49 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{Who can apply}
-    \framesubtitle{Eligibility for EuroHPC access}
-    \begin{itemize}
-        \item \SlidemintTextbf{Researchers} from academia, research institutes, public authorities, and industry.
-        \item Based in an EU Member State, a EuroHPC \SlidemintTextbf{participating state}, or a \SlidemintTextbf{Digital Europe / Horizon Europe}-associated country.
-        \item UK institutions remain eligible for the \SlidemintTextbf{H2020-era systems} under the EU--UK Withdrawal Agreement.
-        \item For \SlidemintEmph{Open Science} research (results public): any European organisation may apply, including companies and SMEs.
-    \end{itemize}
+    \frametitle{Who can apply for which call}
+    \framesubtitle{Eligibility by audience}
+    \begin{columns}[t]
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Academia / public sector}
+        \begin{itemize}
+            \item \SlidemintTextbf{AI for Science} --- the main route for ML research.
+            \item \SlidemintTextbf{Benchmark / Development} --- evidence and porting.
+            \item \SlidemintTextbf{Regular / Extreme Scale} --- research programmes.
+        \end{itemize}
+        \vspace{0.6em}
+        \SlidemintTextbf{AI SMEs / startups}
+        \begin{itemize}
+            \item \SlidemintTextbf{Playground / Fast Lane / Large Scale} --- free for innovation.
+        \end{itemize}
+        \end{column}
 
-    \begin{center}
-        \includegraphics[width=0.72\textwidth]{graphics/eurohpc-participating-states.png}
-        {\scriptsize\textcolor{SlidemintMuted}{EuroHPC JU participating states: 27 EU Member States + 11 associated countries $\Rightarrow$ 38.}}
-    \end{center}
+        \begin{column}{0.49\textwidth}
+        \SlidemintTextbf{Other industry}
+        \begin{itemize}
+            \item \SlidemintTextbf{Pay-per-use} commercial access (not free).
+            \item Free only inside \SlidemintTextbf{collaborative EU projects} (Horizon Europe / Digital Europe).
+        \end{itemize}
+        \vspace{0.6em}
+        \SlidemintTextbf{Everyone}
+        \begin{itemize}
+            \item Based in an EU Member State, a \SlidemintTextbf{participating state}, or a \SlidemintTextbf{Digital Europe / Horizon Europe}-associated country.
+            \item UK institutions: eligible for \SlidemintTextbf{H2020-era systems} under the EU--UK Withdrawal Agreement.
+        \end{itemize}
+        \end{column}
+    \end{columns}
 
-    \textcolor{SlidemintMuted}{There is no privileged access: EU projects line up through the same calls as everyone else.}
+    \vspace{1.5em}
+    \textcolor{SlidemintMuted}{No privileged access: EU projects line up through the same calls as everyone else.}
 \end{frame}
 
 \begin{frame}
     \frametitle{The application workflow}
     \framesubtitle{From call to first job}
     \begin{enumerate}
-        \item \SlidemintTextbf{Choose the access mode.} Six modes with very different latencies (see \emph{Access modes that matter} and \emph{Access mode latency}).
-        \item \SlidemintTextbf{Prepare the application.} The two hard fields for ML are scalability evidence and resource justification (see \emph{The application form} and \emph{What an academic can actually get}).
-        \item \SlidemintTextbf{Submit through the portal} before the cutoff --- Benchmark and Development are continuously open.
+        \item \SlidemintTextbf{Choose the access mode} for your audience (see \emph{Access modes that matter} and \emph{Who can apply for which call}).
+        \item \SlidemintTextbf{Prepare the application.} The two hard fields for ML are scalability evidence and resource justification (see \emph{The application form} and \emph{What you can actually get}).
+        \item \SlidemintTextbf{Submit through the portal} before the cutoff --- Playground, Fast Lane, Benchmark and Development are continuously open.
         \item \SlidemintTextbf{Peer review:} independent panels rank the proposals; the JU took this over from PRACE at the end of 2022.
         \item \SlidemintTextbf{Start computing} with the awarded allocation and host-site accounts.
     \end{enumerate}
@@ -864,29 +1013,35 @@
         \item Submit a \SlidemintTextbf{final report} after the allocation ends.
     \end{itemize}
 
-    \vspace{1em}
+    \vspace{0.8em}
+    For \SlidemintTextbf{AI SMEs/startups}, free access is for \SlidemintEmph{innovation} purposes; the AI Factory provides expert support as part of the deal.
+
+    \vspace{0.8em}
     The exact conditions are set per call --- read the call's documents before applying.
 
-    \vspace{2em}
+    \vspace{1.5em}
     \textcolor{SlidemintMuted}{Free of charge $\neq$ free of effort.}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Where to get help along the way}
-    \framesubtitle{Two support tiers}
-    \SlidemintTextbf{EPICURE} (EuroHPC Application Support) provides \SlidemintEmph{Level 2/3} services:
-    \begin{itemize}
-        \item code enabling and \SlidemintTextbf{scaling} across EuroHPC systems
-        \item \SlidemintTextbf{performance analysis} and benchmarking
-        \item \SlidemintTextbf{code refactoring} and optimization
-    \end{itemize}
+% \begin{frame}
+%     \frametitle{The application form}
+%     See the PDF.
 
-    \vspace{0.8em}
-    \SlidemintTextbf{Level 1} (accounts, logins, queues, basic job scripts) stays with the \SlidemintTextbf{host site's application support} team.
+%     \vspace{0.8em}
 
-    \vspace{2em}
-    \textcolor{SlidemintMuted}{Porting to a new architecture is real work --- budget time for it.}
-\end{frame}
+%     For ML folks the two hard fields are:
+%     \begin{enumerate}
+%         \item \SlidemintTextbf{Scalability evidence}: why your code uses the machine efficiently.
+%         \item \SlidemintTextbf{Resource justification}: why this many hours, and not $10\times$ less.
+%     \end{enumerate}
+
+%     \vspace{0.6em}
+%     Value of \SlidemintTextbf{Benchmark} / \SlidemintTextbf{Development}: they give evidence for larger scales.
+
+%     \vspace{2em}
+%     \textcolor{SlidemintMuted}{\SlidemintEmph{Climb the ladder} because aiming high first is a pain.}
+% \end{frame}
+
 
 \section{MINERVA: the European AI support hub}
 
@@ -894,8 +1049,8 @@
     \frametitle{MINERVA}
     \framesubtitle{The European Support Centre for Scalable AI Research and Deployment}
     A EuroHPC JU-funded project (2025--2027) that helps European AI research
-    teams make real use of HPC: \SlidemintTextbf{free support} for porting,
-    scaling, and training large models on EuroHPC systems.
+    teams and \SlidemintTextbf{AI SMEs} make real use of HPC: \SlidemintTextbf{free support}
+    for porting, scaling, and training large models on EuroHPC systems.
 
     \vspace{0.8em}
     \begin{itemize}
@@ -981,7 +1136,50 @@
     \textcolor{SlidemintMuted}{best-practice-guides.minerva4ai.eu\ \,\textbar\, CC~BY~4.0 (text), Apache~2.0 (code).}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Where to get help along the way}
+    \framesubtitle{Support for academia and SMEs}
+    \SlidemintTextbf{EPICURE} (EuroHPC Application Support) provides \SlidemintEmph{Level 2/3} services:
+    \begin{itemize}
+        \item code enabling and \SlidemintTextbf{scaling} across EuroHPC systems
+        \item \SlidemintTextbf{performance analysis} and benchmarking
+        \item \SlidemintTextbf{code refactoring} and optimization
+    \end{itemize}
+
+    \vspace{0.8em}
+    \SlidemintTextbf{Level 1} (accounts, logins, queues, basic job scripts) stays with the \SlidemintTextbf{host site's application support} team.
+
+    \vspace{0.8em}
+    \SlidemintTextbf{AI SMEs/startups} get \SlidemintEmph{expert support from the AI Factory} as part of Playground / Fast Lane / Large Scale access.
+
+    \vspace{1.5em}
+    \textcolor{SlidemintMuted}{Porting to a new architecture is real work --- budget time for it.}
+\end{frame}
+
 \section{How to use HPC}
+
+\begin{frame}[fragile]
+    \frametitle{SLURM workflows can wildly differ}
+    Rule of thumb: plan as if compute nodes are not workstations with internet.
+
+    \vspace{0.4em}
+    Things that will not work with most EuroHPC setups:
+    \begin{itemize}
+        \item download model at job startup
+        \item real-time \texttt{wandb} monitoring from the node
+        \item creating envs on the cluster
+    \end{itemize}
+
+    \begin{minted}{bash}
+        rsync -av --delete --exclude .git/ ./project/ mn5:/path/to/project/
+
+        export HF_HOME=/scratch/$USER/hf_cache
+        export TRANSFORMERS_OFFLINE=1
+        export HF_DATASETS_OFFLINE=1
+        export WANDB_MODE=offline
+    \end{minted}
+\end{frame}
+
 
 \begin{frame}
     \frametitle{Let's make use of what we've been given!}
@@ -1125,48 +1323,49 @@ result_fields = [
     ``The same experiment across Ferranti, Helix, MN5, and whatever was up this week.''
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{A few commands to actually use}
-    \begin{columns}[t]
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{SLURM}
-        \begin{minted}{bash}
-            squeue --me
-            squeue --me --start
-            scontrol show job <JOBID>
-            sacct -j <JOBID> --format=...
-            seff <JOBID>
-            sshare -u $USER
-            scancel <JOBID>
-            scancel --state=PENDING
-        \end{minted}
-        \end{column}
+% \begin{frame}[fragile]
+%     \frametitle{A few commands to actually use}
+%     \begin{columns}[t]
+%         \begin{column}{0.49\textwidth}
+%         \SlidemintTextbf{SLURM}
+%         \begin{minted}{bash}
+%             squeue --me
+%             squeue --me --start
+%             scontrol show job <JOBID>
+%             sacct -j <JOBID> --format=...
+%             seff <JOBID>
+%             sshare -u $USER
+%             scancel <JOBID>
+%             scancel --state=PENDING
+%         \end{minted}
+%         \end{column}
 
-        \begin{column}{0.49\textwidth}
-        \SlidemintTextbf{HTCondor}
-        \begin{minted}{bash}
-            condor_q $USER
-            condor_q -run $USER
-            condor_rm <ClusterId>
-            condor_ssh_to_job <Id.Proc>
-            condor_submit_bid 50 job.sub
-            condor_change_bid 100 <Id>
-        \end{minted}
-        \end{column}
-    \end{columns}
+%         \begin{column}{0.49\textwidth}
+%         \SlidemintTextbf{HTCondor}
+%         \begin{minted}{bash}
+%             condor_q $USER
+%             condor_q -run $USER
+%             condor_rm <ClusterId>
+%             condor_ssh_to_job <Id.Proc>
+%             condor_submit_bid 50 job.sub
+%             condor_change_bid 100 <Id>
+%         \end{minted}
+%         \end{column}
+%     \end{columns}
 
-    \vspace{0.6em}
-    \SlidemintTextbf{The most underrated:} the one that tells you what you actually used.
-\end{frame}
+%     \vspace{0.6em}
+%     \SlidemintTextbf{The most underrated:} the one that tells you what you actually used.
+% \end{frame}
 
 \section{Closing}
 
 \begin{frame}[fragile]
     \frametitle{Three takeaways}
     \begin{enumerate}
+        \item \SlidemintTextbf{Ask for more: get GPU node hours and ask for export support to get the most out of it}
         \item \SlidemintTextbf{Throughput} $\approx$ GPUs $\times$ reliability $\times$ queue $\times$ proposal latency $\times$ communication.\\
               The cluster's \mintinline{bash}|sinfo| is the smallest factor of that product.
-        \item \SlidemintTextbf{Climb the ladder:} desktop $\to$ university $\to$ state $\to$ federal \SlidemintTextbf{(NHR, GCS)} $\to$ EuroHPC.
+        % \item \SlidemintTextbf{Climb the ladder:} desktop $\to$ university $\to$ state $\to$ federal \SlidemintTextbf{(NHR, GCS)} $\to$ EuroHPC.
         \item \SlidemintTextbf{Workflow:} Small jobs, resumability, DAGs, one local source of truth, efficient code.
     \end{enumerate}
 
@@ -1176,14 +1375,43 @@ result_fields = [
 
 \begin{frame}
     \frametitle{Questions?}
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=south east,yshift=3mm,xshift=-1cm] at (current page.south east) {
+            \includegraphics[height=1cm]{graphics/minerva-logo.png}
+            \hspace{.6em}
+            \includegraphics[height=1cm]{graphics/eu-cofunded.jpg}
+        };
+    \end{tikzpicture}
     \begin{center}
-        \textcolor{SlidemintMuted}{\small Michael Tiemann}
+        \textcolor{SlidemintMuted}{Dr.~Michael Tiemann (original slides: B\'alint Mucs\'anyi)}
 
-        \vspace{2.5em}
+        \vspace{1.5em}
 
-        \includegraphics[height=1.1cm]{graphics/minerva-logo.png}
-        \hspace{2em}
-        \includegraphics[height=1.1cm]{graphics/eu-cofunded.jpg}
+        \begin{tabular}{cccc}
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://minerva4ai.eu}{\qrcode[height=2.0cm]{https://minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{minerva4ai.eu}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://best-practice-guides.minerva4ai.eu}{\qrcode[height=2.0cm]{https://best-practice-guides.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{Best Practice Guides}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://estimator.minerva4ai.eu}{\qrcode[height=2.0cm]{https://estimator.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{Needs Estimator}
+            \end{minipage}
+            &
+            \begin{minipage}[c]{0.21\textwidth}
+                \centering
+                \href{https://hpcgrants.minerva4ai.eu}{\qrcode[height=2.0cm]{https://hpcgrants.minerva4ai.eu}}\\[0.5em]
+                \textcolor{SlidemintMuted}{HPC Grant Studio}
+            \end{minipage}
+        \end{tabular}
     \end{center}
 \end{frame}
 
